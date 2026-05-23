@@ -1,1 +1,15 @@
+# Maven
 /target/
+
+# NetBeans
+/build/
+/dist/
+/nbproject/private/
+
+# Java
+*.class
+
+# Logs
+*.log
+hs_err_pid*
+replay_pid*
