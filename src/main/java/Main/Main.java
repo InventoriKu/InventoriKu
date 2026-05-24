@@ -4,6 +4,7 @@
  */
 package Main;
 import db.koneksi;
+import View.Login;
 
 /**
  *
@@ -14,6 +15,7 @@ public class Main {
     public static void main(String[] args) {
 
         koneksi.getConnection();
+        new Login().setVisible(true);
 
     }   
 }
