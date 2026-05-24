@@ -133,10 +133,8 @@ public class Login extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this,
                         "Login berhasil!\nSelamat datang " + nama);
 
-                // buka dashboard
-                new Dashboard().setVisible(true);
+                new Dashboard(nama, role).setVisible(true);
 
-                // tutup login
                 this.dispose();
 
             } else {

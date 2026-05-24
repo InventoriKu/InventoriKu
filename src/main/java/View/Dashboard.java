@@ -4,20 +4,77 @@
  */
 package View;
 
+import db.koneksi;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 /**
  *
  * @author LENOVO
  */
 public class Dashboard extends javax.swing.JFrame {
     
+    private String role;
+    private String nama;
+    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Dashboard.class.getName());
-
-    /**
-     * Creates new form Dashboard
-     */
+    
     public Dashboard() {
         initComponents();
     }
+
+    public Dashboard(String role, String nama) {
+
+        initComponents();
+
+        this.role = role;
+        this.nama = nama;
+
+        setupDashboard();
+    }
+    
+    private void setupDashboard() {
+
+        lblNama.setText(nama);
+        lblRole.setText(role);
+        
+        try {
+            Connection conn = koneksi.getConnection();
+            String sqlBarang = "SELECT COUNT(*) AS total FROM barang";
+            PreparedStatement psBarang =
+                    conn.prepareStatement(sqlBarang);
+            ResultSet rsBarang =
+                    psBarang.executeQuery();
+            if (rsBarang.next()) {
+                lblBarang.setText(
+                        "Jumlah Barang : " + 
+                        rsBarang.getString("total")
+                );
+            }
+            String sqlKategori =
+                    "SELECT COUNT(*) AS total FROM kategori";
+            PreparedStatement psKategori =
+                    conn.prepareStatement(sqlKategori);
+            ResultSet rsKategori =
+                    psKategori.executeQuery();
+            if (rsKategori.next()) {
+                lblKategori.setText(
+                        "Jumlah Kategori : " +
+                        rsKategori.getString("total")
+                );
+            }
+        } catch (Exception e) {
+            System.out.println(
+                    "Error Dashboard: "
+                    + e.getMessage()
+            );
+        }
+
+        if (role.equalsIgnoreCase("STAFF")) {
+            
+        }
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -28,17 +85,54 @@ public class Dashboard extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        lblNama = new javax.swing.JLabel();
+        lblRole = new javax.swing.JLabel();
+        lblBarang = new javax.swing.JLabel();
+        lblKategori = new javax.swing.JLabel();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        lblNama.setText("jLabel1");
+
+        lblRole.setText("jLabel1");
+
+        lblBarang.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblBarang.setText("jLabel1");
+
+        lblKategori.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblKategori.setText("jLabel1");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblNama, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE)
+                            .addComponent(lblRole, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(lblBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblKategori, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblNama)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblRole)
+                .addGap(102, 102, 102)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(84, Short.MAX_VALUE))
         );
 
         pack();
@@ -48,27 +142,34 @@ public class Dashboard extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new Dashboard().setVisible(true));
+    try {
+        for (javax.swing.UIManager.LookAndFeelInfo info
+                : javax.swing.UIManager.getInstalledLookAndFeels()) {
+
+            if ("Nimbus".equals(info.getName())) {
+                javax.swing.UIManager.setLookAndFeel(
+                        info.getClassName()
+                );
+                break;
+            }
+        }
+
+    } catch (ReflectiveOperationException
+            | javax.swing.UnsupportedLookAndFeelException ex) {
+
+        logger.log(java.util.logging.Level.SEVERE, null, ex);
     }
 
+    java.awt.EventQueue.invokeLater(() ->
+        new Dashboard().setVisible(true)
+    );
+}
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel lblBarang;
+    private javax.swing.JLabel lblKategori;
+    private javax.swing.JLabel lblNama;
+    private javax.swing.JLabel lblRole;
     // End of variables declaration//GEN-END:variables
 }
