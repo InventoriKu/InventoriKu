@@ -14,6 +14,7 @@ import java.sql.Statement;
  * @author LENOVO
  */
 public class koneksi {
+
     private static Connection conn;
 
     public static Connection getConnection() {
@@ -47,6 +48,17 @@ public class koneksi {
             Statement stmt = conn.createStatement();
 
             stmt.executeUpdate("""
+                CREATE TABLE IF NOT EXISTS users (
+                    id_user INT AUTO_INCREMENT PRIMARY KEY,
+                    username VARCHAR(50) NOT NULL UNIQUE,
+                    password VARCHAR(255) NOT NULL,
+                    nama_lengkap VARCHAR(100) NOT NULL,
+                    role ENUM('ADMIN', 'STAFF') DEFAULT 'STAFF',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """);
+
+            stmt.executeUpdate("""
                 CREATE TABLE IF NOT EXISTS kategori (
                     id_kategori INT AUTO_INCREMENT PRIMARY KEY,
                     nama_kategori VARCHAR(100) NOT NULL
@@ -70,11 +82,14 @@ public class koneksi {
                 CREATE TABLE IF NOT EXISTS stok_masuk (
                     id_masuk INT AUTO_INCREMENT PRIMARY KEY,
                     id_barang INT,
+                    id_user INT,
                     jumlah INT NOT NULL,
                     supplier VARCHAR(100),
                     tanggal TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (id_barang)
-                    REFERENCES barang(id_barang)
+                    REFERENCES barang(id_barang),
+                    FOREIGN KEY (id_user)
+                    REFERENCES users(id_user)
                 )
             """);
 
@@ -82,12 +97,22 @@ public class koneksi {
                 CREATE TABLE IF NOT EXISTS stok_keluar (
                     id_keluar INT AUTO_INCREMENT PRIMARY KEY,
                     id_barang INT,
+                    id_user INT,
                     jumlah INT NOT NULL,
                     departemen VARCHAR(100),
                     tanggal TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (id_barang)
-                    REFERENCES barang(id_barang)
+                    REFERENCES barang(id_barang),
+                    FOREIGN KEY (id_user)
+                    REFERENCES users(id_user)
                 )
+            """);
+            
+            stmt.executeUpdate("""
+                INSERT IGNORE INTO users
+                (id_user, username, password, nama_lengkap, role)
+                VALUES
+                (1, 'admin', 'admin123', 'Administrator', 'ADMIN')
             """);
 
             System.out.println("Tabel berhasil dibuat!");
