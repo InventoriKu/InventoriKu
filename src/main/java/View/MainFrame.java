@@ -12,18 +12,18 @@ import java.sql.ResultSet;
  *
  * @author LENOVO
  */
-public class Dashboard extends javax.swing.JFrame {
+public class MainFrame extends javax.swing.JFrame {
     
     private String role;
     private String nama;
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Dashboard.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
     
-    public Dashboard() {
+    public MainFrame() {
         initComponents();
     }
 
-    public Dashboard(String role, String nama) {
+    public MainFrame(String role, String nama) {
 
         initComponents();
 
@@ -128,11 +128,11 @@ public class Dashboard extends javax.swing.JFrame {
                 .addComponent(lblNama)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblRole)
-                .addGap(102, 102, 102)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 154, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(84, Short.MAX_VALUE))
+                .addGap(32, 32, 32))
         );
 
         pack();
@@ -162,7 +162,7 @@ public class Dashboard extends javax.swing.JFrame {
     }
 
     java.awt.EventQueue.invokeLater(() ->
-        new Dashboard().setVisible(true)
+        new MainFrame().setVisible(true)
     );
 }
 
