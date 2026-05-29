@@ -19,6 +19,16 @@ public class Sidebar extends javax.swing.JPanel {
         initComponents();
     }
     
+    public interface SidebarListener {
+        void onMenuClicked(String menuName);
+    }
+
+    private SidebarListener listener;
+
+    public void setSidebarListener(SidebarListener listener) {
+        this.listener = listener;
+    }
+    
     public void setUserInfo(String nama, String role) {
         lblNama.setText(nama);
         lblRole.setText(role);
@@ -41,6 +51,7 @@ public class Sidebar extends javax.swing.JPanel {
     public void setOnLogout(java.awt.event.ActionListener listener) {
         btnLogout.addActionListener(listener);
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -67,6 +78,7 @@ public class Sidebar extends javax.swing.JPanel {
         lblRole.setText("jLabel1");
 
         btnBarang.setText("Manajemen Barang");
+        btnBarang.addActionListener(this::btnBarangActionPerformed);
 
         btnKategori.setText("Manajemen Kategori");
 
@@ -128,6 +140,13 @@ public class Sidebar extends javax.swing.JPanel {
 
         lblNama.getAccessibleContext().setAccessibleName("lblNama");
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnBarangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBarangActionPerformed
+        // TODO add your handling code here:
+        if (listener != null) {
+            listener.onMenuClicked("ManajemenBarang");
+        }
+    }//GEN-LAST:event_btnBarangActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

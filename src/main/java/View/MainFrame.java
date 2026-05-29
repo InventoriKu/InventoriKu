@@ -32,6 +32,26 @@ public class MainFrame extends javax.swing.JFrame {
         this.nama = nama;
 
         setupDashboard();
+        
+        sidebar1.setSidebarListener(new Sidebar.SidebarListener() {
+        @Override
+        public void onMenuClicked(String menuName) {
+            if (menuName.equals("ManajemenBarang")) {
+                
+                View.ManajemenBarang halamanBarang = new View.ManajemenBarang();
+                pnlMainContent.removeAll();
+                pnlMainContent.setLayout(new java.awt.BorderLayout());
+                pnlMainContent.add(halamanBarang, java.awt.BorderLayout.CENTER);
+                halamanBarang.setSize(pnlMainContent.getSize());
+                
+                // Refresh UI
+                pnlMainContent.revalidate();
+                pnlMainContent.repaint();
+                
+            } else if (menuName.equals("ManajemenKategori")) {
+            }
+        }
+    });
     }
     
     private void setupDashboard() {
@@ -92,9 +112,10 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu3 = new javax.swing.JMenu();
         jMenu4 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        sidebar1 = new Components.Sidebar();
+        pnlMainContent = new javax.swing.JPanel();
         lblBarang = new javax.swing.JLabel();
         lblKategori = new javax.swing.JLabel();
-        sidebar1 = new Components.Sidebar();
 
         jMenu3.setText("File");
         jMenuBar2.add(jMenu3);
@@ -112,27 +133,41 @@ public class MainFrame extends javax.swing.JFrame {
         lblKategori.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         lblKategori.setText("jLabel1");
 
+        javax.swing.GroupLayout pnlMainContentLayout = new javax.swing.GroupLayout(pnlMainContent);
+        pnlMainContent.setLayout(pnlMainContentLayout);
+        pnlMainContentLayout.setHorizontalGroup(
+            pnlMainContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlMainContentLayout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addComponent(lblBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(118, Short.MAX_VALUE))
+        );
+        pnlMainContentLayout.setVerticalGroup(
+            pnlMainContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlMainContentLayout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addGroup(pnlMainContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(sidebar1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36)
-                .addComponent(lblBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(112, Short.MAX_VALUE))
+                .addComponent(pnlMainContent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(sidebar1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(pnlMainContent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -173,6 +208,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JLabel lblBarang;
     private javax.swing.JLabel lblKategori;
+    private javax.swing.JPanel pnlMainContent;
     private Components.Sidebar sidebar1;
     // End of variables declaration//GEN-END:variables
 }
