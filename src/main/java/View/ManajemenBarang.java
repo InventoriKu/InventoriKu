@@ -20,9 +20,23 @@ public class ManajemenBarang extends javax.swing.JPanel {
         statCard2.setData("KATEGORI", "12", new java.awt.Color(160, 250, 200), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\category-icon.png");
         statCard3.setData("STOK KRITIS", "8 Barang", new java.awt.Color(255, 210, 210), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\danger-icon.png");
         statCard4.setData("MUTASI HARI INI", "42 Items", new java.awt.Color(255, 220, 220), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\stats-up-icon.png");
+    
+        setupTableBarang();
     }
     
+    void setupTableBarang() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) tblBarang.table.getModel();
+        model.setRowCount(0); 
+        model.addRow(new Object[]{"Monitor Dell UltraSharp 27\"", "Elektronik", "3 - DI BAWAH THRESHOLD", "Unit", "[Edit] [Hapus]"});
+        model.addRow(new Object[]{"Keyboard Mekanik Keychron K2", "Elektronik", "24 - STOK AMAN", "Unit", "[Edit] [Hapus]"});
+        
+        String[] kolomBarang = {"Nama Barang", "Kategori", "Stok Saat Ini", "Satuan", "Aksi"};
     
+        tblBarang.setupTable(kolomBarang);
+
+        model.addRow(new Object[]{"Monitor Dell UltraSharp 27\"", "Elektronik", "3 - DI BAWAH THRESHOLD", "Unit", "[Edit] [Hapus]"});
+        model.addRow(new Object[]{"Keyboard Mekanik Keychron K2", "Elektronik", "24 - STOK AMAN", "Unit", "[Edit] [Hapus]"});
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -34,32 +48,45 @@ public class ManajemenBarang extends javax.swing.JPanel {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        statCard3 = new Components.StatCard();
-        statCard4 = new Components.StatCard();
         statCard1 = new Components.StatCard();
         statCard2 = new Components.StatCard();
+        statCard3 = new Components.StatCard();
+        statCard4 = new Components.StatCard();
+        tblBarang = new Components.DataTable();
 
-        jPanel1.setLayout(new java.awt.GridLayout(1, 4, 8, 0));
-        jPanel1.add(statCard3);
-        jPanel1.add(statCard4);
+        setMaximumSize(new java.awt.Dimension(820, 2147483647));
+
+        jPanel1.setMaximumSize(new java.awt.Dimension(800, 90));
+        jPanel1.setMinimumSize(new java.awt.Dimension(800, 90));
+        jPanel1.setPreferredSize(new java.awt.Dimension(900, 90));
+        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 5, 18));
         jPanel1.add(statCard1);
         jPanel1.add(statCard2);
+        jPanel1.add(statCard3);
+        jPanel1.add(statCard4);
+
+        tblBarang.setEnabled(false);
+        tblBarang.setPreferredSize(new java.awt.Dimension(820, 377));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1125, Short.MAX_VALUE)
+                    .addComponent(tblBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(320, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tblBarang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -70,5 +97,6 @@ public class ManajemenBarang extends javax.swing.JPanel {
     private Components.StatCard statCard2;
     private Components.StatCard statCard3;
     private Components.StatCard statCard4;
+    private Components.DataTable tblBarang;
     // End of variables declaration//GEN-END:variables
 }

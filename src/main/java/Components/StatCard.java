@@ -50,13 +50,17 @@ public class StatCard extends javax.swing.JPanel {
         lblStatTitle = new javax.swing.JLabel();
         lblStatValue = new javax.swing.JLabel();
 
+        setBackground(new java.awt.Color(255, 255, 255));
         setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 204, 255), 1, true));
         setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        setMaximumSize(new java.awt.Dimension(230, 90));
+        setPreferredSize(new java.awt.Dimension(230, 90));
 
         pnlIcon.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 0, true));
 
         lblIcon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblIcon.setToolTipText("");
+        lblIcon.setMaximumSize(new java.awt.Dimension(60, 60));
 
         javax.swing.GroupLayout pnlIconLayout = new javax.swing.GroupLayout(pnlIcon);
         pnlIcon.setLayout(pnlIconLayout);
