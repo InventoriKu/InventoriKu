@@ -27,15 +27,13 @@ public class ManajemenBarang extends javax.swing.JPanel {
     void setupTableBarang() {
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) tblBarang.table.getModel();
         model.setRowCount(0); 
-        model.addRow(new Object[]{"Monitor Dell UltraSharp 27\"", "Elektronik", "3 - DI BAWAH THRESHOLD", "Unit", "[Edit] [Hapus]"});
-        model.addRow(new Object[]{"Keyboard Mekanik Keychron K2", "Elektronik", "24 - STOK AMAN", "Unit", "[Edit] [Hapus]"});
         
         String[] kolomBarang = {"Nama Barang", "Kategori", "Stok Saat Ini", "Satuan", "Aksi"};
     
         tblBarang.setupTable(kolomBarang);
 
-        model.addRow(new Object[]{"Monitor Dell UltraSharp 27\"", "Elektronik", "3 - DI BAWAH THRESHOLD", "Unit", "[Edit] [Hapus]"});
-        model.addRow(new Object[]{"Keyboard Mekanik Keychron K2", "Elektronik", "24 - STOK AMAN", "Unit", "[Edit] [Hapus]"});
+        model.addRow(new Object[]{"Monitor Dell UltraSharp 27\"", "Elektronik", "3 - DI BAWAH THRESHOLD", "Unit", ""});
+        model.addRow(new Object[]{"Keyboard Mekanik Keychron K2", "Elektronik", "24 - STOK AMAN", "Unit", ""});
     }
 
     /**
@@ -75,7 +73,7 @@ public class ManajemenBarang extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1125, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1080, Short.MAX_VALUE)
                     .addComponent(tblBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -85,8 +83,8 @@ public class ManajemenBarang extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tblBarang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(tblBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(41, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
