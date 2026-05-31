@@ -25,10 +25,10 @@ public class ManageStockContent extends javax.swing.JPanel {
         
         mainContent.setLayout(new CardLayout());
         cardLayout = (CardLayout) mainContent.getLayout();
-        
+                
         // Buat kedua panel SEKALI SAJA
         inStockPanel = new Components.InStockTransaction();
-        outStockPanel = new Components.OutStockTransaction();               
+        outStockPanel = new Components.OutStockTransaction();                  
         
         // Tambahkan ke CardLayout dengan nama
         mainContent.add(inStockPanel, "in");

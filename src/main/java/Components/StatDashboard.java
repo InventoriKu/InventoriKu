@@ -10,22 +10,22 @@ import javax.swing.ImageIcon;
  *
  * @author HP
  */
-public class StatCard extends javax.swing.JPanel {
+public class StatDashboard extends javax.swing.JPanel {
 
     /**
      * Creates new form StatCard
      */
-    public StatCard() {
-        initComponents();
+    public StatDashboard() {
+        initComponents();                 
     }
     
-    public void setData(String title, String value, java.awt.Color color, String iconPath) {
+    public void setData(String title, String value,String satuan, java.awt.Color color, String iconPath) {
         lblStatTitle.setText(title);
-        lblStatValue.setText(value);
+        lblStatValue.setText(value + satuan);
         pnlIcon.setBackground(color);       
-                
+ 
         if (iconPath != null) {          
-            java.net.URL imgUrl = getClass().getClassLoader().getResource(iconPath);                        
+            java.net.URL imgUrl = getClass().getClassLoader().getResource(iconPath);             
             if (imgUrl != null) { 
                 java.awt.Image img = new ImageIcon(imgUrl).getImage()
                 .getScaledInstance(32, 32, java.awt.Image.SCALE_SMOOTH);
@@ -58,8 +58,9 @@ public class StatCard extends javax.swing.JPanel {
         setBackground(new java.awt.Color(255, 255, 255));
         setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 204, 255), 1, true));
         setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        setMaximumSize(new java.awt.Dimension(230, 90));
-        setPreferredSize(new java.awt.Dimension(230, 90));
+        setMaximumSize(null);
+        setMinimumSize(null);
+        setPreferredSize(null);
 
         pnlIcon.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 0, true));
 
@@ -73,22 +74,22 @@ public class StatCard extends javax.swing.JPanel {
             pnlIconLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlIconLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(lblIcon, javax.swing.GroupLayout.DEFAULT_SIZE, 60, Short.MAX_VALUE)
+                .addContainerGap())
         );
         pnlIconLayout.setVerticalGroup(
             pnlIconLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlIconLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(lblIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
-        lblStatTitle.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        lblStatTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         lblStatTitle.setForeground(new java.awt.Color(102, 102, 102));
         lblStatTitle.setText("test");
 
-        lblStatValue.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        lblStatValue.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         lblStatValue.setForeground(new java.awt.Color(25, 28, 30));
         lblStatValue.setText("test");
 
@@ -97,25 +98,23 @@ public class StatCard extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addComponent(pnlIcon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(23, 23, 23)
+                .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblStatValue)
-                    .addComponent(lblStatTitle))
-                .addContainerGap(104, Short.MAX_VALUE))
+                    .addComponent(lblStatTitle)
+                    .addComponent(pnlIcon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(177, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblStatTitle)
-                        .addGap(0, 0, 0)
-                        .addComponent(lblStatValue))
-                    .addComponent(pnlIcon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addGap(16, 16, 16)
+                .addComponent(pnlIcon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 63, Short.MAX_VALUE)
+                .addComponent(lblStatTitle)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lblStatValue)
+                .addGap(40, 40, 40))
         );
     }// </editor-fold>//GEN-END:initComponents
 
