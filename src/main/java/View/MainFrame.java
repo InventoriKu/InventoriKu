@@ -48,7 +48,16 @@ public class MainFrame extends javax.swing.JFrame {
                 pnlMainContent.revalidate();
                 pnlMainContent.repaint();
                 
-            } else if (menuName.equals("ManajemenKategori")) {
+            } else if (menuName.equals("ManajemenStok")) {
+                View.ManageStockContent halamanStok = new View.ManageStockContent();
+                pnlMainContent.removeAll();
+                pnlMainContent.setLayout(new java.awt.BorderLayout());
+                pnlMainContent.add(halamanStok, java.awt.BorderLayout.CENTER);
+                halamanStok.setSize(pnlMainContent.getSize());
+                
+                // Refresh UI
+                pnlMainContent.revalidate();
+                pnlMainContent.repaint();
             }
         }
     });
@@ -159,8 +168,8 @@ public class MainFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(sidebar1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(sidebar1, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(pnlMainContent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );

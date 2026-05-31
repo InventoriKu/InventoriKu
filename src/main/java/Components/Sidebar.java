@@ -83,12 +83,14 @@ public class Sidebar extends javax.swing.JPanel {
         btnKategori.setText("Manajemen Kategori");
 
         btnStok.setText("Stok Masuk/Keluar");
+        btnStok.addActionListener(this::btnStokActionPerformed);
 
         btnLaporan.setText("Laporan Stok");
 
         btnUser.setText("Manajemen User");
 
         btnLogout.setBackground(new java.awt.Color(204, 0, 0));
+        btnLogout.setForeground(new java.awt.Color(255, 255, 255));
         btnLogout.setText("Logout");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -147,6 +149,13 @@ public class Sidebar extends javax.swing.JPanel {
             listener.onMenuClicked("ManajemenBarang");
         }
     }//GEN-LAST:event_btnBarangActionPerformed
+
+    private void btnStokActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStokActionPerformed
+        // TODO add your handling code here:
+        if (listener != null) {
+            listener.onMenuClicked("ManajemenStok");
+        }
+    }//GEN-LAST:event_btnStokActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
