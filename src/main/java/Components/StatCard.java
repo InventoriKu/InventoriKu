@@ -22,13 +22,19 @@ public class StatCard extends javax.swing.JPanel {
     public void setData(String title, String value, java.awt.Color color, String iconPath) {
         lblStatTitle.setText(title);
         lblStatValue.setText(value);
-        pnlIcon.setBackground(color);
+        pnlIcon.setBackground(color);                
         
-        if (iconPath != null) {
-            lblIcon.setIcon(new ImageIcon(iconPath));
-            lblIcon.setText("");
-        } else {
-            System.out.println("Gagal memuat icon di path: " + iconPath);
+        if (iconPath != null) {          
+            java.net.URL imgUrl = getClass().getClassLoader().getResource(iconPath);            
+
+            if (imgUrl != null) { 
+                java.awt.Image img = new ImageIcon(imgUrl).getImage()
+                .getScaledInstance(32, 32, java.awt.Image.SCALE_SMOOTH);
+                lblIcon.setIcon(new ImageIcon(img));
+                lblIcon.setText("");
+            } else {
+                System.out.println("Gagal memuat icon: " + iconPath);                
+            }
         }
     }
 

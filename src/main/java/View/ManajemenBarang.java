@@ -16,10 +16,10 @@ public class ManajemenBarang extends javax.swing.JPanel {
     public ManajemenBarang() {
         initComponents();
 
-        statCard1.setData("TOTAL BARANG", "1,284", new java.awt.Color(220, 225, 255), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\barang-icon.png");
-        statCard2.setData("KATEGORI", "12", new java.awt.Color(160, 250, 200), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\category-icon.png");
-        statCard3.setData("STOK KRITIS", "8 Barang", new java.awt.Color(255, 210, 210), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\danger-icon.png");
-        statCard4.setData("MUTASI HARI INI", "42 Items", new java.awt.Color(255, 220, 220), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\stats-up-icon.png");
+        statCard1.setData("TOTAL BARANG", "1,284", new java.awt.Color(220, 225, 255), "assets/barang-icon.png");
+        statCard2.setData("KATEGORI", "12", new java.awt.Color(160, 250, 200), "assets/category-icon.png");
+        statCard3.setData("STOK KRITIS", "8 Barang", new java.awt.Color(255, 210, 210), "assets/danger-icon.png");
+        statCard4.setData("MUTASI HARI INI", "42 Items", new java.awt.Color(255, 220, 220), "assets/stats-up-icon.png");
     
         setupTableBarang();
     }
