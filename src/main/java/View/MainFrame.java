@@ -34,7 +34,8 @@ public class MainFrame extends javax.swing.JFrame {
         this.nama = nama;
 
         setupDashboard();
-        
+        showDashboard();
+                                
         sidebar1.setSidebarListener(new Sidebar.SidebarListener() {
         @Override
         public void onMenuClicked(String menuName) {
@@ -67,6 +68,34 @@ public class MainFrame extends javax.swing.JFrame {
     });
     }
     
+    
+    
+     private void showDashboard() {                      
+        View.DashboardContent dashboard = new View.DashboardContent();
+        pnlMainContent.removeAll();
+        pnlMainContent.setLayout(new java.awt.BorderLayout());
+        pnlMainContent.add(dashboard, java.awt.BorderLayout.CENTER);
+        dashboard.setSize(pnlMainContent.getSize());
+        pnlMainContent.revalidate();
+        pnlMainContent.repaint();
+    }
+    
+    private void showManajemenBarang() {
+        View.ManajemenBarang halamanBarang = new View.ManajemenBarang();
+        pnlMainContent.removeAll();
+        pnlMainContent.add(halamanBarang, java.awt.BorderLayout.CENTER);
+        pnlMainContent.revalidate();
+        pnlMainContent.repaint();
+    }
+    
+    private void showManajemenStok() {
+        View.ManageStockContent halamanStok = new View.ManageStockContent();
+        pnlMainContent.removeAll();
+        pnlMainContent.add(halamanStok, java.awt.BorderLayout.CENTER);
+        pnlMainContent.revalidate();
+        pnlMainContent.repaint();
+    }
+    
     private void setupDashboard() {
         try {
             Connection conn = koneksi.getConnection();
@@ -76,10 +105,10 @@ public class MainFrame extends javax.swing.JFrame {
             ResultSet rsBarang =
                     psBarang.executeQuery();
             if (rsBarang.next()) {
-                lblBarang.setText(
-                        "Jumlah Barang : " + 
-                        rsBarang.getString("total")
-                );
+//                lblBarang.setText(
+//                        "Jumlah Barang : " + 
+//                        rsBarang.getString("total")
+//                );
             }
             String sqlKategori =
                     "SELECT COUNT(*) AS total FROM kategori";
@@ -88,10 +117,10 @@ public class MainFrame extends javax.swing.JFrame {
             ResultSet rsKategori =
                     psKategori.executeQuery();
             if (rsKategori.next()) {
-                lblKategori.setText(
-                        "Jumlah Kategori : " +
-                        rsKategori.getString("total")
-                );
+//                lblKategori.setText(
+//                        "Jumlah Kategori : " +
+//                        rsKategori.getString("total")
+//                );
             }
         } catch (Exception e) {
             System.out.println(
@@ -127,8 +156,6 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuItem1 = new javax.swing.JMenuItem();
         sidebar1 = new Components.Sidebar();
         pnlMainContent = new javax.swing.JPanel();
-        lblBarang = new javax.swing.JLabel();
-        lblKategori = new javax.swing.JLabel();
 
         jMenu3.setText("File");
         jMenuBar2.add(jMenu3);
@@ -140,41 +167,16 @@ public class MainFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        lblBarang.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        lblBarang.setText("jLabel1");
-
-        lblKategori.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        lblKategori.setText("jLabel1");
-
-        javax.swing.GroupLayout pnlMainContentLayout = new javax.swing.GroupLayout(pnlMainContent);
-        pnlMainContent.setLayout(pnlMainContentLayout);
-        pnlMainContentLayout.setHorizontalGroup(
-            pnlMainContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlMainContentLayout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addComponent(lblBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(118, Short.MAX_VALUE))
-        );
-        pnlMainContentLayout.setVerticalGroup(
-            pnlMainContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlMainContentLayout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addGroup(pnlMainContentLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblKategori, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        pnlMainContent.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(sidebar1, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlMainContent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(sidebar1, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(pnlMainContent, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -219,8 +221,6 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JLabel lblBarang;
-    private javax.swing.JLabel lblKategori;
     private javax.swing.JPanel pnlMainContent;
     private Components.Sidebar sidebar1;
     // End of variables declaration//GEN-END:variables
