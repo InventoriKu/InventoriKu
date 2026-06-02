@@ -51,6 +51,8 @@ public class MainFrame extends javax.swing.JFrame {
                 pnlMainContent.repaint();
                 
             } else if (menuName.equals("ManajemenKategori")) {
+                
+                
             }
         }
     });

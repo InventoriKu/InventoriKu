@@ -3,110 +3,182 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package Components;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultCellEditor;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 
 /**
  *
  * @author HP
  */
 public class DataTable extends javax.swing.JPanel {
+    
+    public interface TableActionListener {
+        void onEdit(int row);
+        void onDelete(int row);
+    }
 
-    /**
-     * Creates new form DataTable
-     */
+    private String searchPlaceholder = "Cari...";
+    private List<Integer> statusColumns = new ArrayList<>();
+    private List<Integer> actionColumns = new ArrayList<>();
+    private TableActionListener tableActionListener;
+
     public DataTable() {
         initComponents();
         
-        // Design table header
-        table.getTableHeader().setDefaultRenderer(new javax.swing.table.DefaultTableCellRenderer() {
+        // PAKSA TABEL AGAR ENABLED (Mengabaikan settingan NetBeans GUI Builder)
+        table.setEnabled(true);
+        table.setFocusable(true);
+        
+        setupTableDesign();
+    }
+    
+    private void setupTableDesign() {
+        table.getTableHeader().setDefaultRenderer(new DefaultTableCellRenderer() {
             @Override
-            public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                javax.swing.JLabel headerLabel = (javax.swing.JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
-                headerLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(12, 15, 12, 15)); 
-                headerLabel.setBackground(new java.awt.Color(240, 244, 248));
-                headerLabel.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel headerLabel = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                headerLabel.setBorder(BorderFactory.createEmptyBorder(12, 15, 12, 15)); 
+                headerLabel.setBackground(new Color(240, 244, 248));
+                headerLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
                 return headerLabel;
             }
         });
 
-        // design kolom tabel
-        table.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+        table.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
             @Override
-            public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                
-                javax.swing.JLabel cell = (javax.swing.JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                cell.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 15, 10, 15)); 
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel cell = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                cell.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15)); 
 
                 if (!isSelected) {
-                    if (row % 2 == 0) {
-                        cell.setBackground(java.awt.Color.WHITE);
-                    } else {
-                        cell.setBackground(new java.awt.Color(252, 253, 254)); 
-                    }
-                    cell.setForeground(java.awt.Color.BLACK);
-                    cell.setFont(new java.awt.Font("Segoe UI", java.awt.Font.PLAIN, 12));
+                    if (row % 2 == 0) cell.setBackground(Color.WHITE);
+                    else cell.setBackground(new Color(252, 253, 254)); 
+                    cell.setForeground(Color.BLACK);
+                    cell.setFont(new Font("Segoe UI", Font.PLAIN, 12));
                 }
 
-                if (column == 2 && value != null) {
+                if (statusColumns.contains(column) && value != null) {
                     String textValue = value.toString().toUpperCase();
-
                     if (textValue.contains("THRESHOLD") || textValue.contains("KRITIS") || textValue.contains("RENDAH")) {
-                        cell.setForeground(new java.awt.Color(204, 0, 0)); 
-                        cell.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
+                        cell.setForeground(new Color(204, 0, 0)); 
+                        cell.setFont(new Font("Segoe UI", Font.BOLD, 12));
                     } else if (textValue.contains("AMAN") || textValue.contains("CUKUP")) {
-                        cell.setForeground(new java.awt.Color(0, 153, 76)); 
-                        cell.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
+                        cell.setForeground(new Color(0, 153, 76)); 
+                        cell.setFont(new Font("Segoe UI", Font.BOLD, 12));
                     }
                 }
-
                 return cell;
             }
         });
 
         table.setRowHeight(50);
         table.setShowGrid(false);
-        table.setIntercellSpacing(new java.awt.Dimension(0, 0)); 
-        table.setBackground(java.awt.Color.WHITE); 
-        table.setSelectionBackground(new java.awt.Color(242, 244, 248));
-        table.setSelectionForeground(java.awt.Color.BLACK);        
+        table.setIntercellSpacing(new Dimension(0, 0)); 
+        table.setBackground(Color.WHITE); 
+        table.setSelectionBackground(new Color(242, 244, 248));
+        table.setSelectionForeground(Color.BLACK);        
     }
     
-    public void setupTable(String[] columnNames) {
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) table.getModel();
-        model.setColumnIdentifiers(columnNames);
-        model.setRowCount(0);
+    // METHOD PENTING: Custom TableModel agar hanya kolom Aksi yang bisa diklik/diedit
+    public void setColumns(String[] columnNames) {
+        DefaultTableModel model = new DefaultTableModel(null, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // HANYA kolom aksi (Edit/Hapus) yang merespon klik!
+                return actionColumns.contains(column);
+            }
+        };
+        table.setModel(model);
         
-        int kolomTerakhir = table.getColumnCount() - 1;
-        if (kolomTerakhir >= 0) {
-            table.getColumnModel().getColumn(kolomTerakhir).setCellRenderer(new ActionButtonRenderer());
-        }
-        
-        javax.swing.table.JTableHeader header = table.getTableHeader();
-        header.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12)); 
-        header.setBackground(new java.awt.Color(240, 242, 245)); 
-        header.setForeground(new java.awt.Color(100, 110, 120));
+        JTableHeader header = table.getTableHeader();
+        header.setFont(new Font("Segoe UI", Font.BOLD, 12)); 
+        header.setBackground(new Color(240, 242, 245)); 
+        header.setForeground(new Color(100, 110, 120));
         header.setReorderingAllowed(false); 
 
-        if (table.getParent() != null && table.getParent().getParent() instanceof javax.swing.JScrollPane) {
-            javax.swing.JScrollPane scrollPane = (javax.swing.JScrollPane) table.getParent().getParent();
-            scrollPane.setBorder(javax.swing.BorderFactory.createEmptyBorder());
-            scrollPane.getViewport().setBackground(java.awt.Color.WHITE);
+        if (table.getParent() != null && table.getParent().getParent() instanceof JScrollPane) {
+            JScrollPane scrollPane = (JScrollPane) table.getParent().getParent();
+            scrollPane.setBorder(BorderFactory.createEmptyBorder());
+            scrollPane.getViewport().setBackground(Color.WHITE);
         }
     }
     
-    // Button Action Renderer
-    class ActionButtonRenderer implements javax.swing.table.TableCellRenderer {
+    public void addStatusColumn(int columnIndex) {
+        if (!statusColumns.contains(columnIndex)) {
+            statusColumns.add(columnIndex);
+        }
+    }
+    
+    public void addActionColumn(int columnIndex) {
+        if (!actionColumns.contains(columnIndex)) {
+            actionColumns.add(columnIndex);
+        }
+        // Pasang Renderer dan Editor agar tombol muncul dan bisa diklik
+        if (columnIndex < table.getColumnCount()) {
+            table.getColumnModel().getColumn(columnIndex).setCellRenderer(new ActionButtonRenderer());
+            table.getColumnModel().getColumn(columnIndex).setCellEditor(new ActionButtonEditor(new JCheckBox()));
+        }
+    }
+
+    public void setTableActionListener(TableActionListener listener) {
+        this.tableActionListener = listener;
+    }
+
+    public void setSearchPlaceholder(String placeholder) {
+        this.searchPlaceholder = placeholder;
+        textFieldSearch.setText(placeholder);
+        textFieldSearch.setForeground(new Color(197, 197, 211));
+    }
+    
+    public void setButtonText(String text) {
+        btnTambah.setText(text);
+    }
+    
+    public void setComboBoxModel(String[] items) {
+        jComboBox1.setModel(new DefaultComboBoxModel<>(items));
+    }
+
+    public void setComboBoxVisible(boolean visible) {
+        jComboBox1.setVisible(visible);
+    }
+
+    public DefaultTableModel getModel() { return (DefaultTableModel) table.getModel(); }
+    public JButton getBtnTambah() { return btnTambah; }
+    public JTextField getSearchField() { return textFieldSearch; }
+    public JTable getTable() { return table; }
+    
+    class ActionButtonRenderer implements TableCellRenderer {
         @Override
-        public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            javax.swing.JPanel panel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 15, 8));
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 8));
+            panel.setBackground(isSelected ? table.getSelectionBackground() : (row % 2 == 0 ? Color.WHITE : new Color(252, 253, 254)));
 
-            panel.setBackground(isSelected ? table.getSelectionBackground() : java.awt.Color.WHITE);
+            JButton btnEdit = new JButton("Edit");
+            JButton btnHapus = new JButton("Hapus");
 
-            javax.swing.JButton btnEdit = new javax.swing.JButton("Edit");
-            javax.swing.JButton btnHapus = new javax.swing.JButton("Hapus");
-
-            styleMinibutton(btnEdit, new java.awt.Color(0, 102, 204));
-            styleMinibutton(btnHapus, new java.awt.Color(204, 0, 0));
+            styleMinibutton(btnEdit, new Color(0, 102, 204));
+            styleMinibutton(btnHapus, new Color(204, 0, 0));
 
             panel.add(btnEdit);
             panel.add(btnHapus);
@@ -114,15 +186,67 @@ public class DataTable extends javax.swing.JPanel {
             return panel;
         }
 
-        private void styleMinibutton(javax.swing.JButton btn, java.awt.Color color) {
-            btn.setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
+        private void styleMinibutton(JButton btn, Color color) {
+            btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
             btn.setForeground(color);
             btn.setContentAreaFilled(false);
             btn.setBorderPainted(false); 
             btn.setFocusPainted(false);
             btn.setOpaque(false);
-            btn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-            btn.setMargin(new java.awt.Insets(0, 0, 0, 0)); 
+            btn.setMargin(new Insets(0, 0, 0, 0)); 
+        }
+    }
+    
+    // EDITOR: Membuat tombol benar-benar bisa diklik
+    class ActionButtonEditor extends DefaultCellEditor {
+        private JPanel panel;
+        private JButton btnEdit;
+        private JButton btnHapus;
+        private int currentRow;
+
+        public ActionButtonEditor(JCheckBox checkBox) {
+            super(checkBox);
+            panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 8));
+            btnEdit = new JButton("Edit");
+            btnHapus = new JButton("Hapus");
+
+            styleMinibutton(btnEdit, new Color(0, 102, 204));
+            styleMinibutton(btnHapus, new Color(204, 0, 0));
+
+            btnEdit.addActionListener(e -> {
+                fireEditingStopped(); // Hentikan mode edit sel terlebih dahulu
+                if (tableActionListener != null) tableActionListener.onEdit(currentRow);
+            });
+            btnHapus.addActionListener(e -> {
+                fireEditingStopped(); // Hentikan mode edit sel terlebih dahulu
+                if (tableActionListener != null) tableActionListener.onDelete(currentRow);
+            });
+
+            panel.add(btnEdit);
+            panel.add(btnHapus);
+        }
+
+        private void styleMinibutton(JButton btn, Color color) {
+            btn.setFont(new Font("Segoe UI", Font.BOLD, 12));
+            btn.setForeground(color);
+            btn.setContentAreaFilled(false);
+            btn.setBorderPainted(false); 
+            btn.setFocusPainted(false);
+            btn.setOpaque(false);
+            btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            btn.setMargin(new Insets(0, 0, 0, 0)); 
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            this.currentRow = row;
+            panel.setBackground(table.getSelectionBackground());
+            return panel;
+        }
+        
+        @Override
+        public Object getCellEditorValue() {
+            return "";
         }
     }
 
