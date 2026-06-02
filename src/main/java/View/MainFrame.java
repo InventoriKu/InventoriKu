@@ -27,6 +27,8 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame(String role, String nama) {
 
         initComponents();
+        setLocationRelativeTo(null);
+        setExtendedState(MainFrame.MAXIMIZED_BOTH);
 
         this.role = role;
         this.nama = nama;
