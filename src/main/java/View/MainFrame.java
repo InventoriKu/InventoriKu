@@ -27,6 +27,8 @@ public class MainFrame extends javax.swing.JFrame {
     public MainFrame(String role, String nama) {
 
         initComponents();
+        setLocationRelativeTo(null);
+        setExtendedState(MainFrame.MAXIMIZED_BOTH);
 
         this.role = role;
         this.nama = nama;
@@ -37,12 +39,30 @@ public class MainFrame extends javax.swing.JFrame {
         sidebar1.setSidebarListener(new Sidebar.SidebarListener() {
         @Override
         public void onMenuClicked(String menuName) {
-            if (menuName.equals("Dashboard")){
-               showDashboard();
-            } else if (menuName.equals("ManajemenBarang")) {
-               showManajemenBarang();
-            } else if (menuName.equals("ManajemenStok")) {
-               showManajemenStok();
+            if (menuName.equals("ManajemenBarang")) {
+                
+                View.ManajemenBarang halamanBarang = new View.ManajemenBarang();
+                pnlMainContent.removeAll();
+                pnlMainContent.setLayout(new java.awt.BorderLayout());
+                pnlMainContent.add(halamanBarang, java.awt.BorderLayout.CENTER);
+                halamanBarang.setSize(pnlMainContent.getSize());
+                
+                // Refresh UI
+                pnlMainContent.revalidate();
+                pnlMainContent.repaint();
+                
+            } else if (menuName.equals("ManajemenKategori")) {
+                
+                View.ManajemenKategori halamanKategori = new View.ManajemenKategori();
+                pnlMainContent.removeAll();
+                pnlMainContent.setLayout(new java.awt.BorderLayout());
+                pnlMainContent.add(halamanKategori, java.awt.BorderLayout.CENTER);
+                halamanKategori.setSize(pnlMainContent.getSize());
+                
+                // Refresh UI
+                pnlMainContent.revalidate();
+                pnlMainContent.repaint();
+                
             }
         }
     });

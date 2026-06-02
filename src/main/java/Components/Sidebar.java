@@ -10,21 +10,33 @@ package Components;
  */
 public class Sidebar extends javax.swing.JPanel {
     
-    private java.awt.event.ActionListener menuListener;
-
-    /**
-     * Creates new form Sidebar
-     */
-    public Sidebar() {
-        initComponents();
-    }
-    
     public interface SidebarListener {
         void onMenuClicked(String menuName);
     }
 
     private SidebarListener listener;
+    private java.awt.event.ActionListener menuListener;
 
+    public Sidebar() {
+        initComponents();
+        
+        btnKategori.addActionListener(e -> {
+            if (listener != null) listener.onMenuClicked("ManajemenKategori");
+        });
+        
+        btnStok.addActionListener(e -> {
+            if (listener != null) listener.onMenuClicked("ManajemenStok");
+        });
+        
+        btnLaporan.addActionListener(e -> {
+            if (listener != null) listener.onMenuClicked("LaporanStok");
+        });
+        
+        btnUser.addActionListener(e -> {
+            if (listener != null) listener.onMenuClicked("ManajemenUser");
+        });
+    }
+    
     public void setSidebarListener(SidebarListener listener) {
         this.listener = listener;
     }
@@ -33,14 +45,13 @@ public class Sidebar extends javax.swing.JPanel {
         lblNama.setText(nama);
         lblRole.setText(role);
 
-        if (role.equalsIgnoreCase("STAFF")) {
+        if (role != null && role.equalsIgnoreCase("STAFF")) {
             btnUser.setVisible(false);
         }
     }
 
     public void setMenuListener(java.awt.event.ActionListener listener) {
         this.menuListener = listener;
-
         btnBarang.addActionListener(listener);
         btnKategori.addActionListener(listener);
         btnStok.addActionListener(listener);
