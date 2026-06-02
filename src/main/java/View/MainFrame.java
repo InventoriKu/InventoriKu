@@ -52,6 +52,15 @@ public class MainFrame extends javax.swing.JFrame {
                 
             } else if (menuName.equals("ManajemenKategori")) {
                 
+                View.ManajemenKategori halamanKategori = new View.ManajemenKategori();
+                pnlMainContent.removeAll();
+                pnlMainContent.setLayout(new java.awt.BorderLayout());
+                pnlMainContent.add(halamanKategori, java.awt.BorderLayout.CENTER);
+                halamanKategori.setSize(pnlMainContent.getSize());
+                
+                // Refresh UI
+                pnlMainContent.revalidate();
+                pnlMainContent.repaint();
                 
             }
         }

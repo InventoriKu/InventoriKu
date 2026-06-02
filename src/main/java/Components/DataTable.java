@@ -46,7 +46,6 @@ public class DataTable extends javax.swing.JPanel {
     public DataTable() {
         initComponents();
         
-        // PAKSA TABEL AGAR ENABLED (Mengabaikan settingan NetBeans GUI Builder)
         table.setEnabled(true);
         table.setFocusable(true);
         
@@ -100,12 +99,10 @@ public class DataTable extends javax.swing.JPanel {
         table.setSelectionForeground(Color.BLACK);        
     }
     
-    // METHOD PENTING: Custom TableModel agar hanya kolom Aksi yang bisa diklik/diedit
     public void setColumns(String[] columnNames) {
         DefaultTableModel model = new DefaultTableModel(null, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                // HANYA kolom aksi (Edit/Hapus) yang merespon klik!
                 return actionColumns.contains(column);
             }
         };
@@ -134,7 +131,6 @@ public class DataTable extends javax.swing.JPanel {
         if (!actionColumns.contains(columnIndex)) {
             actionColumns.add(columnIndex);
         }
-        // Pasang Renderer dan Editor agar tombol muncul dan bisa diklik
         if (columnIndex < table.getColumnCount()) {
             table.getColumnModel().getColumn(columnIndex).setCellRenderer(new ActionButtonRenderer());
             table.getColumnModel().getColumn(columnIndex).setCellEditor(new ActionButtonEditor(new JCheckBox()));
@@ -147,8 +143,13 @@ public class DataTable extends javax.swing.JPanel {
 
     public void setSearchPlaceholder(String placeholder) {
         this.searchPlaceholder = placeholder;
-        textFieldSearch.setText(placeholder);
-        textFieldSearch.setForeground(new Color(197, 197, 211));
+        if (textFieldSearch.hasFocus()) {
+            textFieldSearch.setText("");
+            textFieldSearch.setForeground(java.awt.Color.BLACK);
+        } else {
+            textFieldSearch.setText(placeholder);
+            textFieldSearch.setForeground(new java.awt.Color(197, 197, 211));
+        }
     }
     
     public void setButtonText(String text) {
@@ -166,6 +167,7 @@ public class DataTable extends javax.swing.JPanel {
     public DefaultTableModel getModel() { return (DefaultTableModel) table.getModel(); }
     public JButton getBtnTambah() { return btnTambah; }
     public JTextField getSearchField() { return textFieldSearch; }
+    public javax.swing.JComboBox<String> getComboBox() { return jComboBox1; }
     public JTable getTable() { return table; }
     
     class ActionButtonRenderer implements TableCellRenderer {
@@ -197,7 +199,6 @@ public class DataTable extends javax.swing.JPanel {
         }
     }
     
-    // EDITOR: Membuat tombol benar-benar bisa diklik
     class ActionButtonEditor extends DefaultCellEditor {
         private JPanel panel;
         private JButton btnEdit;
@@ -214,11 +215,11 @@ public class DataTable extends javax.swing.JPanel {
             styleMinibutton(btnHapus, new Color(204, 0, 0));
 
             btnEdit.addActionListener(e -> {
-                fireEditingStopped(); // Hentikan mode edit sel terlebih dahulu
+                fireEditingStopped();
                 if (tableActionListener != null) tableActionListener.onEdit(currentRow);
             });
             btnHapus.addActionListener(e -> {
-                fireEditingStopped(); // Hentikan mode edit sel terlebih dahulu
+                fireEditingStopped();
                 if (tableActionListener != null) tableActionListener.onDelete(currentRow);
             });
 
@@ -379,7 +380,8 @@ public class DataTable extends javax.swing.JPanel {
 
     private void textFieldSearchFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textFieldSearchFocusGained
         // TODO add your handling code here:
-        if (textFieldSearch.getText().equals("Cari Barang...")) {
+        String currentText = textFieldSearch.getText().trim();
+        if (currentText.equalsIgnoreCase(searchPlaceholder.trim())) {
            textFieldSearch.setText("");
            textFieldSearch.setForeground(java.awt.Color.BLACK); 
         }
@@ -387,8 +389,8 @@ public class DataTable extends javax.swing.JPanel {
 
     private void textFieldSearchFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_textFieldSearchFocusLost
         // TODO add your handling code here:
-        if (textFieldSearch.getText().isEmpty()) {
-            textFieldSearch.setText("Cari Barang...");
+        if (textFieldSearch.getText().trim().isEmpty()) {
+            textFieldSearch.setText(searchPlaceholder);
             textFieldSearch.setForeground(new java.awt.Color(153, 153, 153));
         }
     }//GEN-LAST:event_textFieldSearchFocusLost

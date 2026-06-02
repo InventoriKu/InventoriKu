@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package View;
+
 import java.awt.GridLayout;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,17 +16,12 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableModel;
-
 /**
  *
  * @author HP
  */
 public class ManajemenBarang extends javax.swing.JPanel {
 
-    /**
-     * Creates new form ManajemenBarang
-     */
-    // Helper class untuk menyimpan ID dan Nama Kategori pada ComboBox
     class KategoriItem {
         int id;
         String nama;
@@ -41,49 +37,72 @@ public class ManajemenBarang extends javax.swing.JPanel {
 
     public ManajemenBarang() {
         initComponents();
-        
-        // Memanggil koneksi database
         db.koneksi.getConnection();
 
-        // 1. Konfigurasi UI DataTable
         tblBarang.setSearchPlaceholder("Cari Barang...");
         tblBarang.setButtonText("Tambah Barang");
-        tblBarang.setComboBoxModel(new String[]{"Semua Kategori"});
+        
+        loadKategoriFilter();
+        
+        String[] kolomBarang = {
+            "ID", "Nama Barang", "Kategori", "Stok Saat Ini", "Supplier", "Aksi"
+        };
+        tblBarang.setColumns(kolomBarang);
+        tblBarang.getTable().getColumnModel().getColumn(0).setMinWidth(0);
+        tblBarang.getTable().getColumnModel().getColumn(0).setMaxWidth(0);
+        tblBarang.getTable().getColumnModel().getColumn(0).setWidth(0);
+        tblBarang.addStatusColumn(3); 
+        tblBarang.addActionColumn(5); 
 
-        // 2. Event Listener Tombol 'Tambah Barang' di Panel Atas
-        tblBarang.getBtnTambah().addActionListener(e -> {
-            showBarangDialog(null); // null menandakan operasi CREATE
+        tblBarang.getSearchField().addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent e) {
+                loadDataBarang();
+            }
         });
 
-        // 3. Setup Aksi Tombol Edit & Delete dalam Tabel
+        tblBarang.getComboBox().addActionListener(e -> {
+            loadDataBarang();
+        });
+
+        tblBarang.getBtnTambah().addActionListener(e -> {
+            showBarangDialog(null);
+        });
+        
         tblBarang.setTableActionListener(new Components.DataTable.TableActionListener() {
             @Override
             public void onEdit(int row) {
-                // Ambil ID Barang dari Kolom ke-0 (Kolom Tersembunyi)
                 int idBarang = (int) tblBarang.getModel().getValueAt(row, 0);
-                showBarangDialog(idBarang); // ID diberikan untuk operasi UPDATE
+                showBarangDialog(idBarang);
             }
 
             @Override
             public void onDelete(int row) {
                 int idBarang = (int) tblBarang.getModel().getValueAt(row, 0);
                 String namaBarang = tblBarang.getModel().getValueAt(row, 1).toString();
-                hapusBarang(idBarang, namaBarang); // Operasi DELETE
+                hapusBarang(idBarang, namaBarang);
             }
         });
 
-        // 4. Muat Data Pertama Kali
         refreshData();
-        
-        // Data Dummy untuk Card ke-4
         statCard4.setData("MUTASI HARI INI", "42 Items", new java.awt.Color(255, 220, 220), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\stats-up-icon.png");
     }
     
-    // ==============================================
-    // BAGIAN LOGIKA CRUD DATABASE
-    // ==============================================
-    
-    // Method Pop-up Form untuk Tambah (Create) dan Edit (Update)
+    private void loadKategoriFilter() {
+        try {
+            Connection conn = db.koneksi.getConnection();
+            ResultSet rs = conn.createStatement().executeQuery("SELECT nama_kategori FROM kategori");
+            java.util.ArrayList<String> list = new java.util.ArrayList<>();
+            list.add("Semua Kategori");
+            while (rs.next()) {
+                list.add(rs.getString("nama_kategori"));
+            }
+            tblBarang.setComboBoxModel(list.toArray(new String[0]));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void showBarangDialog(Integer idBarang) {
         JTextField txtNama = new JTextField();
         JComboBox<KategoriItem> cbKategori = new JComboBox<>();
@@ -91,7 +110,6 @@ public class ManajemenBarang extends javax.swing.JPanel {
         JSpinner spinMinStok = new JSpinner(new SpinnerNumberModel(5, 0, 999999, 1));
         JTextField txtSupplier = new JTextField();
 
-        // Ambil Data Kategori dari Database untuk dimasukkan ke ComboBox
         try {
             Connection conn = db.koneksi.getConnection();
             ResultSet rs = conn.createStatement().executeQuery("SELECT id_kategori, nama_kategori FROM kategori");
@@ -102,7 +120,6 @@ public class ManajemenBarang extends javax.swing.JPanel {
             e.printStackTrace(); 
         }
 
-        // Jika idBarang tidak NULL (Berarti Mode EDIT), Muat Data Lama dari DB
         if (idBarang != null) {
             try {
                 Connection conn = db.koneksi.getConnection();
@@ -128,7 +145,6 @@ public class ManajemenBarang extends javax.swing.JPanel {
             }
         }
 
-        // Susun Form UI
         JPanel panel = new JPanel(new GridLayout(5, 2, 10, 10));
         panel.add(new JLabel("Nama Barang:")); panel.add(txtNama);
         panel.add(new JLabel("Kategori:")); panel.add(cbKategori);
@@ -139,7 +155,6 @@ public class ManajemenBarang extends javax.swing.JPanel {
         String title = (idBarang == null) ? "Tambah Barang Baru" : "Edit Data Barang";
         int result = JOptionPane.showConfirmDialog(this, panel, title, JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
-        // Jika user mengklik tombol OK (Save)
         if (result == JOptionPane.OK_OPTION) {
             if (txtNama.getText().trim().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Nama barang tidak boleh kosong!", "Peringatan", JOptionPane.WARNING_MESSAGE);
@@ -153,7 +168,6 @@ public class ManajemenBarang extends javax.swing.JPanel {
                 Connection conn = db.koneksi.getConnection();
                 
                 if (idBarang == null) {
-                    // C R E A T E
                     String sql = "INSERT INTO barang (nama_barang, id_kategori, stok, stok_minimum, supplier) VALUES (?, ?, ?, ?, ?)";
                     PreparedStatement ps = conn.prepareStatement(sql);
                     ps.setString(1, txtNama.getText().trim());
@@ -162,10 +176,8 @@ public class ManajemenBarang extends javax.swing.JPanel {
                     ps.setInt(4, (int) spinMinStok.getValue());
                     ps.setString(5, txtSupplier.getText().trim());
                     ps.executeUpdate();
-                    
                     JOptionPane.showMessageDialog(this, "Barang Berhasil Ditambahkan!");
                 } else {
-                    // U P D A T E
                     String sql = "UPDATE barang SET nama_barang=?, id_kategori=?, stok=?, stok_minimum=?, supplier=? WHERE id_barang=?";
                     PreparedStatement ps = conn.prepareStatement(sql);
                     ps.setString(1, txtNama.getText().trim());
@@ -175,13 +187,9 @@ public class ManajemenBarang extends javax.swing.JPanel {
                     ps.setString(5, txtSupplier.getText().trim());
                     ps.setInt(6, idBarang);
                     ps.executeUpdate();
-                    
                     JOptionPane.showMessageDialog(this, "Barang Berhasil Diperbarui!");
                 }
-                
-                // Segarkan Tabel dan Stat Cards
                 refreshData();
-                
             } catch (Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "Terjadi Kesalahan Database: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -189,10 +197,8 @@ public class ManajemenBarang extends javax.swing.JPanel {
         }
     }
 
-    // Method Hapus Barang (Delete)
     private void hapusBarang(int idBarang, String namaBarang) {
         int confirm = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus barang '" + namaBarang + "'?", "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        
         if (confirm == JOptionPane.YES_OPTION) {
             try {
                 Connection conn = db.koneksi.getConnection();
@@ -200,59 +206,38 @@ public class ManajemenBarang extends javax.swing.JPanel {
                 PreparedStatement ps = conn.prepareStatement(sql);
                 ps.setInt(1, idBarang);
                 ps.executeUpdate();
-                
                 JOptionPane.showMessageDialog(this, "Barang Berhasil Dihapus!");
                 refreshData();
-                
             } catch (Exception e) {
                 e.printStackTrace();
-                // Antisipasi error Foreign Key constraint (Barang masih digunakan di stok_masuk / stok_keluar)
-                JOptionPane.showMessageDialog(this, "Gagal Menghapus! Pastikan barang ini tidak memiliki riwayat stok masuk/keluar.\nError: " + e.getMessage(), "Gagal", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Gagal Menghapus! Barang mungkin memiliki riwayat transaksi.\nError: " + e.getMessage(), "Gagal", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
     
-    // Method untuk Segarkan ulang seluruh komponen UI
     private void refreshData() {
-        loadDataBarang(); // Muat ulang tabel
-        
-        // Muat ulang statistik card
+        loadDataBarang();
         statCard1.setData("TOTAL BARANG", getTotalBarang(), new java.awt.Color(220, 225, 255), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\barang-icon.png");
         statCard2.setData("KATEGORI", getTotalKategori(), new java.awt.Color(160, 250, 200), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\category-icon.png");
         statCard3.setData("STOK KRITIS", getStokKritis(), new java.awt.Color(255, 210, 210), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\danger-icon.png");
     }
 
-    // ==============================================
-    // MENGAMBIL DATA (READ & STATS)
-    // ==============================================
-
     private void loadDataBarang() {
-        String[] kolomBarang = {
-            "ID",            // Index 0 (Akan disembunyikan)
-            "Nama Barang",   // Index 1
-            "Kategori",      // Index 2
-            "Stok Saat Ini", // Index 3 (Diwarnai Hijau/Merah)
-            "Supplier",      // Index 4
-            "Aksi"           // Index 5 (Tombol Edit/Hapus)
-        };
+        String keyword = tblBarang.getSearchField().getText().trim();
+        if (keyword.equals("Cari Barang...")) {
+            keyword = "";
+        }
 
-        tblBarang.setColumns(kolomBarang);
-        
-        // Sembunyikan kolom ID secara visual, tapi tetap dapat diambil datanya
-        tblBarang.getTable().getColumnModel().getColumn(0).setMinWidth(0);
-        tblBarang.getTable().getColumnModel().getColumn(0).setMaxWidth(0);
-        tblBarang.getTable().getColumnModel().getColumn(0).setWidth(0);
-
-        // Update Indeks kolom karena ketambahan kolom "ID"
-        tblBarang.addStatusColumn(3); 
-        tblBarang.addActionColumn(5); 
+        String selectedKategori = tblBarang.getComboBox().getSelectedItem() != null 
+            ? tblBarang.getComboBox().getSelectedItem().toString() 
+            : "Semua Kategori";
 
         DefaultTableModel model = tblBarang.getModel();
         model.setRowCount(0);
 
         try {
             Connection conn = db.koneksi.getConnection();
-            String sql = """
+            StringBuilder sql = new StringBuilder("""
                 SELECT
                     b.id_barang,
                     b.nama_barang,
@@ -261,27 +246,35 @@ public class ManajemenBarang extends javax.swing.JPanel {
                     b.stok_minimum,
                     b.supplier
                 FROM barang b
-                LEFT JOIN kategori k
-                ON b.id_kategori = k.id_kategori
-            """;
+                LEFT JOIN kategori k ON b.id_kategori = k.id_kategori
+                WHERE (b.nama_barang LIKE ? OR b.supplier LIKE ?)
+            """);
 
-            PreparedStatement ps = conn.prepareStatement(sql);
+            if (!selectedKategori.equals("Semua Kategori")) {
+                sql.append(" AND k.nama_kategori = ? ");
+            }
+
+            PreparedStatement ps = conn.prepareStatement(sql.toString());
+            ps.setString(1, "%" + keyword + "%");
+            ps.setString(2, "%" + keyword + "%");
+            if (!selectedKategori.equals("Semua Kategori")) {
+                ps.setString(3, selectedKategori);
+            }
+
             ResultSet rs = ps.executeQuery();
-
             while (rs.next()) {
                 int idBarang = rs.getInt("id_barang");
                 int stok = rs.getInt("stok");
                 int stokMin = rs.getInt("stok_minimum");
-                
                 String statusTeks = (stok <= stokMin) ? stok + " (Kritis)" : stok + " (Aman)";
 
                 model.addRow(new Object[]{
-                    idBarang,                           // 0
-                    rs.getString("nama_barang"),        // 1
-                    rs.getString("nama_kategori"),      // 2
-                    statusTeks,                         // 3
-                    rs.getString("supplier"),           // 4
-                    ""                                  // 5 Slot Action
+                    idBarang,
+                    rs.getString("nama_barang"),
+                    rs.getString("nama_kategori"),
+                    statusTeks,
+                    rs.getString("supplier"),
+                    ""
                 });
             }
         } catch (Exception e) {
@@ -295,10 +288,7 @@ public class ManajemenBarang extends javax.swing.JPanel {
             String sql = "SELECT COUNT(*) FROM barang WHERE stok <= stok_minimum";
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return rs.getInt(1) + " Barang";
-            }
+            if (rs.next()) return rs.getInt(1) + " Barang";
         } catch (Exception e) { e.printStackTrace(); }
         return "0 Barang";
     }
@@ -309,10 +299,7 @@ public class ManajemenBarang extends javax.swing.JPanel {
             String sql = "SELECT COUNT(*) FROM kategori";
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return String.valueOf(rs.getInt(1));
-            }
+            if (rs.next()) return String.valueOf(rs.getInt(1));
         } catch (Exception e) { e.printStackTrace(); }
         return "0";
     }
@@ -323,10 +310,7 @@ public class ManajemenBarang extends javax.swing.JPanel {
             String sql = "SELECT COUNT(*) FROM barang";
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                return String.valueOf(rs.getInt(1));
-            }
+            if (rs.next()) return String.valueOf(rs.getInt(1));
         } catch (Exception e) { e.printStackTrace(); }
         return "0";
     }
