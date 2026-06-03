@@ -53,6 +53,10 @@ public class ManajemenBarang extends javax.swing.JPanel {
         tblBarang.getTable().getColumnModel().getColumn(0).setWidth(0);
         tblBarang.addStatusColumn(3); 
         tblBarang.addActionColumn(5); 
+        
+        tblBarang.setPaginationActionListener((targetPage, limit) -> {
+            loadDataBarang(targetPage, limit);
+        });
 
         tblBarang.getSearchField().addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
@@ -84,8 +88,8 @@ public class ManajemenBarang extends javax.swing.JPanel {
             }
         });
 
-        refreshData();
-        statCard4.setData("MUTASI HARI INI", "42 Items", new java.awt.Color(255, 220, 220), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\stats-up-icon.png");
+        refreshStatCard();
+        loadDataBarang(tblBarang.getCurrentPage(), tblBarang.getLimitPerPage());
     }
     
     private void loadKategoriFilter() {
@@ -217,12 +221,21 @@ public class ManajemenBarang extends javax.swing.JPanel {
     
     private void refreshData() {
         loadDataBarang();
+        refreshStatCard();
+    }
+    
+    private void refreshStatCard() {
         statCard1.setData("TOTAL BARANG", getTotalBarang(), new java.awt.Color(220, 225, 255), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\barang-icon.png");
         statCard2.setData("KATEGORI", getTotalKategori(), new java.awt.Color(160, 250, 200), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\category-icon.png");
         statCard3.setData("STOK KRITIS", getStokKritis(), new java.awt.Color(255, 210, 210), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\danger-icon.png");
     }
 
     private void loadDataBarang() {
+        tblBarang.resetPage(); // Reset halaman ke 1 saat user ngetik pencarian / ganti kategori
+        loadDataBarang(tblBarang.getCurrentPage(), tblBarang.getLimitPerPage());
+    }
+
+    private void loadDataBarang(int page, int limit) {
         String keyword = tblBarang.getSearchField().getText().trim();
         if (keyword.equals("Cari Barang...")) {
             keyword = "";
@@ -235,9 +248,36 @@ public class ManajemenBarang extends javax.swing.JPanel {
         DefaultTableModel model = tblBarang.getModel();
         model.setRowCount(0);
 
+        int totalDataFilter = 0;
+        int offset = (page - 1) * limit; 
+
         try {
             Connection conn = db.koneksi.getConnection();
-            StringBuilder sql = new StringBuilder("""
+            
+            StringBuilder countSql = new StringBuilder("""
+                SELECT COUNT(*) 
+                FROM barang b
+                LEFT JOIN kategori k ON b.id_kategori = k.id_kategori
+                WHERE (b.nama_barang LIKE ? OR b.supplier LIKE ?)
+            """);
+            
+            if (!selectedKategori.equals("Semua Kategori")) {
+                countSql.append(" AND k.nama_kategori = ? ");
+            }
+            
+            PreparedStatement psCount = conn.prepareStatement(countSql.toString());
+            psCount.setString(1, "%" + keyword + "%");
+            psCount.setString(2, "%" + keyword + "%");
+            if (!selectedKategori.equals("Semua Kategori")) {
+                psCount.setString(3, selectedKategori);
+            }
+            
+            ResultSet rsCount = psCount.executeQuery();
+            if (rsCount.next()) {
+                totalDataFilter = rsCount.getInt(1);
+            }
+
+            StringBuilder dataSql = new StringBuilder("""
                 SELECT
                     b.id_barang,
                     b.nama_barang,
@@ -251,17 +291,25 @@ public class ManajemenBarang extends javax.swing.JPanel {
             """);
 
             if (!selectedKategori.equals("Semua Kategori")) {
-                sql.append(" AND k.nama_kategori = ? ");
+                dataSql.append(" AND k.nama_kategori = ? ");
             }
+            
+            dataSql.append(" LIMIT ? OFFSET ? ");
 
-            PreparedStatement ps = conn.prepareStatement(sql.toString());
-            ps.setString(1, "%" + keyword + "%");
-            ps.setString(2, "%" + keyword + "%");
+            PreparedStatement psData = conn.prepareStatement(dataSql.toString());
+            
+            int paramIndex = 1;
+            psData.setString(paramIndex++, "%" + keyword + "%");
+            psData.setString(paramIndex++, "%" + keyword + "%");
+            
             if (!selectedKategori.equals("Semua Kategori")) {
-                ps.setString(3, selectedKategori);
+                psData.setString(paramIndex++, selectedKategori);
             }
+            
+            psData.setInt(paramIndex++, limit);
+            psData.setInt(paramIndex++, offset);
 
-            ResultSet rs = ps.executeQuery();
+            ResultSet rs = psData.executeQuery();
             while (rs.next()) {
                 int idBarang = rs.getInt("id_barang");
                 int stok = rs.getInt("stok");
@@ -277,6 +325,9 @@ public class ManajemenBarang extends javax.swing.JPanel {
                     ""
                 });
             }
+            
+            tblBarang.updatePaginationStatus(totalDataFilter);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -328,7 +379,6 @@ public class ManajemenBarang extends javax.swing.JPanel {
         statCard1 = new Components.StatCard();
         statCard2 = new Components.StatCard();
         statCard3 = new Components.StatCard();
-        statCard4 = new Components.StatCard();
         tblBarang = new Components.DataTable();
 
         setMaximumSize(new java.awt.Dimension(820, 2147483647));
@@ -340,7 +390,6 @@ public class ManajemenBarang extends javax.swing.JPanel {
         jPanel1.add(statCard1);
         jPanel1.add(statCard2);
         jPanel1.add(statCard3);
-        jPanel1.add(statCard4);
 
         tblBarang.setEnabled(false);
         tblBarang.setPreferredSize(new java.awt.Dimension(820, 377));
@@ -373,7 +422,6 @@ public class ManajemenBarang extends javax.swing.JPanel {
     private Components.StatCard statCard1;
     private Components.StatCard statCard2;
     private Components.StatCard statCard3;
-    private Components.StatCard statCard4;
     private Components.DataTable tblBarang;
     // End of variables declaration//GEN-END:variables
 }

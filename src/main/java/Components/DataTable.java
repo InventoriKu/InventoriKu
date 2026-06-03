@@ -37,12 +37,22 @@ public class DataTable extends javax.swing.JPanel {
         void onEdit(int row);
         void onDelete(int row);
     }
+    
+    public interface PaginationActionListener {
+        void onPageChanged(int targetPage, int limit);
+    }
+
 
     private String searchPlaceholder = "Cari...";
     private List<Integer> statusColumns = new ArrayList<>();
     private List<Integer> actionColumns = new ArrayList<>();
     private TableActionListener tableActionListener;
-
+    
+    private PaginationActionListener paginationListener;
+    private int currentPage = 1;
+    private int limitPerPage = 5;
+    private int totalData = 0;
+    
     public DataTable() {
         initComponents();
         
@@ -50,6 +60,7 @@ public class DataTable extends javax.swing.JPanel {
         table.setFocusable(true);
         
         setupTableDesign();
+        setupPaginationEvents();
     }
     
     private void setupTableDesign() {
@@ -152,6 +163,31 @@ public class DataTable extends javax.swing.JPanel {
         }
     }
     
+    private void setupPaginationEvents() {
+        btnPrevious.addActionListener(e -> {
+            if (currentPage > 1) {
+                currentPage--;
+                triggerPageChange();
+            }
+        });
+
+        btnNext.addActionListener(e -> {
+            int maxPage = (int) Math.ceil((double) totalData / limitPerPage);
+            if (currentPage < maxPage) {
+                currentPage++;
+                triggerPageChange();
+            }
+        });
+    }
+
+    private void triggerPageChange() {
+        if (paginationListener != null) {
+            paginationListener.onPageChanged(currentPage, limitPerPage);
+        } else {
+            System.out.println("Sistem Pagination Error: Listener belum terpasang!");
+        }
+    }
+    
     public void setButtonText(String text) {
         btnTambah.setText(text);
     }
@@ -173,7 +209,7 @@ public class DataTable extends javax.swing.JPanel {
     class ActionButtonRenderer implements TableCellRenderer {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 8));
+            JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 8));
             panel.setBackground(isSelected ? table.getSelectionBackground() : (row % 2 == 0 ? Color.WHITE : new Color(252, 253, 254)));
 
             JButton btnEdit = new JButton("Edit");
@@ -207,7 +243,7 @@ public class DataTable extends javax.swing.JPanel {
 
         public ActionButtonEditor(JCheckBox checkBox) {
             super(checkBox);
-            panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 8));
+            panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 8));
             btnEdit = new JButton("Edit");
             btnHapus = new JButton("Hapus");
 
@@ -250,6 +286,41 @@ public class DataTable extends javax.swing.JPanel {
             return "";
         }
     }
+    
+    public void updatePaginationStatus(int totalData) {
+        this.totalData = totalData;
+        
+        int maxPage = (int) Math.ceil((double) totalData / limitPerPage);
+        if (maxPage == 0) maxPage = 1;
+
+        if (currentPage > maxPage) {
+            currentPage = maxPage;
+        }
+
+        int fromItem = totalData == 0 ? 0 : ((currentPage - 1) * limitPerPage) + 1;
+        int toItem = Math.min(currentPage * limitPerPage, totalData);
+
+        jLabel1.setText("Menampilkan " + fromItem + " - " + toItem + " dari " + totalData + " data");
+
+        btnPrevious.setEnabled(currentPage > 1);
+        btnNext.setEnabled(currentPage < maxPage);
+    }
+
+    public void setPaginationActionListener(PaginationActionListener listener) {
+        this.paginationListener = listener;
+    }
+
+    public void setLimitPerPage(int limit) {
+        this.limitPerPage = limit;
+        this.currentPage = 1;
+    }
+
+    public void resetPage() {
+        this.currentPage = 1;
+    }
+    
+    public int getCurrentPage() { return currentPage; }
+    public int getLimitPerPage() { return limitPerPage; }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -316,6 +387,9 @@ public class DataTable extends javax.swing.JPanel {
 
         btnPrevious.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnPrevious.setText("<");
+        btnPrevious.setMaximumSize(new java.awt.Dimension(0, 0));
+        btnPrevious.setMinimumSize(new java.awt.Dimension(0, 0));
+        btnPrevious.setPreferredSize(new java.awt.Dimension(38, 38));
         btnPrevious.addActionListener(this::btnPreviousActionPerformed);
 
         btnNext.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -340,9 +414,9 @@ public class DataTable extends javax.swing.JPanel {
                         .addGap(6, 6, 6)
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnPrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnNext, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnPrevious, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnNext, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -358,10 +432,9 @@ public class DataTable extends javax.swing.JPanel {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addContainerGap())
-                    .addComponent(btnPrevious, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnPrevious, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                        .addComponent(jLabel1))
                     .addComponent(btnNext, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
     }// </editor-fold>//GEN-END:initComponents

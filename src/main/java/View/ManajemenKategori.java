@@ -34,6 +34,10 @@ public class ManajemenKategori extends javax.swing.JPanel {
         dataTable1.getTable().getColumnModel().getColumn(0).setMaxWidth(0);
         dataTable1.getTable().getColumnModel().getColumn(0).setWidth(0);
         dataTable1.addActionColumn(2);
+        
+        dataTable1.setPaginationActionListener((targetPage, limit) -> {
+            loadDataKategori(targetPage, limit);
+        });
 
         dataTable1.getSearchField().addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
@@ -61,7 +65,8 @@ public class ManajemenKategori extends javax.swing.JPanel {
             }
         });
 
-        refreshData();
+        refreshStatCard();
+        loadDataKategori(dataTable1.getCurrentPage(), dataTable1.getLimitPerPage());    
     }
     
     private void showKategoriDialog(Integer idKategori) {
@@ -140,11 +145,20 @@ public class ManajemenKategori extends javax.swing.JPanel {
 
     private void refreshData() {
         loadDataKategori();
+        refreshStatCard();
+    }
+    
+    private void refreshStatCard() {
         statCard1.setData("TOTAL KATEGORI", getTotalKategori(), new java.awt.Color(160, 250, 200), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\category-icon.png");
         statCard2.setData("BARANG TERDAFTAR", getTotalBarang(), new java.awt.Color(220, 225, 255), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\barang-icon.png");
     }
 
     private void loadDataKategori() {
+        dataTable1.resetPage();
+        loadDataKategori(dataTable1.getCurrentPage(), dataTable1.getLimitPerPage());
+    }
+
+    private void loadDataKategori(int page, int limit) {
         String keyword = dataTable1.getSearchField().getText().trim();
         if (keyword.equals("Cari Kategori...")) {
             keyword = "";
@@ -153,13 +167,27 @@ public class ManajemenKategori extends javax.swing.JPanel {
         DefaultTableModel model = dataTable1.getModel();
         model.setRowCount(0);
 
+        int totalDataFilter = 0;
+        int offset = (page - 1) * limit; 
+
         try {
             Connection conn = db.koneksi.getConnection();
-            String sql = "SELECT id_kategori, nama_kategori FROM kategori WHERE nama_kategori LIKE ?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, "%" + keyword + "%");
 
-            ResultSet rs = ps.executeQuery();
+            String countSql = "SELECT COUNT(*) FROM kategori WHERE nama_kategori LIKE ?";
+            PreparedStatement psCount = conn.prepareStatement(countSql);
+            psCount.setString(1, "%" + keyword + "%");
+            ResultSet rsCount = psCount.executeQuery();
+            if (rsCount.next()) {
+                totalDataFilter = rsCount.getInt(1);
+            }
+
+            String dataSql = "SELECT id_kategori, nama_kategori FROM kategori WHERE nama_kategori LIKE ? LIMIT ? OFFSET ?";
+            PreparedStatement psData = conn.prepareStatement(dataSql);
+            psData.setString(1, "%" + keyword + "%");
+            psData.setInt(2, limit);
+            psData.setInt(3, offset);
+
+            ResultSet rs = psData.executeQuery();
             while (rs.next()) {
                 model.addRow(new Object[]{
                     rs.getInt("id_kategori"),
@@ -167,6 +195,9 @@ public class ManajemenKategori extends javax.swing.JPanel {
                     ""
                 });
             }
+
+            dataTable1.updatePaginationStatus(totalDataFilter);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
