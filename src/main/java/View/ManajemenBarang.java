@@ -42,7 +42,7 @@ public class ManajemenBarang extends javax.swing.JPanel {
         tblBarang.setSearchPlaceholder("Cari Barang...");
         tblBarang.setButtonText("Tambah Barang");
         
-        loadKategoriFilter();
+        loadKategoriFilter();        
         
         String[] kolomBarang = {
             "ID", "Nama Barang", "Kategori", "Stok Saat Ini", "Supplier", "Aksi"
@@ -89,11 +89,7 @@ public class ManajemenBarang extends javax.swing.JPanel {
         });
 
         refreshStatCard();
-        loadDataBarang(tblBarang.getCurrentPage(), tblBarang.getLimitPerPage());
-        
-        statCard1.setData("TOTAL BARANG", "1,284", new java.awt.Color(220, 225, 255), "assets/barang-icon.png");
-        statCard2.setData("KATEGORI", "12", new java.awt.Color(160, 250, 200), "assets/category-icon.png");
-        statCard3.setData("STOK KRITIS", "8 Barang", new java.awt.Color(255, 210, 210), "assets/danger-icon.png");        
+        loadDataBarang(tblBarang.getCurrentPage(), tblBarang.getLimitPerPage());                
     }
     
     private void loadKategoriFilter() {
@@ -229,9 +225,14 @@ public class ManajemenBarang extends javax.swing.JPanel {
     }
     
     private void refreshStatCard() {
-        statCard1.setData("TOTAL BARANG", getTotalBarang(), new java.awt.Color(220, 225, 255), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\barang-icon.png");
-        statCard2.setData("KATEGORI", getTotalKategori(), new java.awt.Color(160, 250, 200), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\category-icon.png");
-        statCard3.setData("STOK KRITIS", getStokKritis(), new java.awt.Color(255, 210, 210), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\danger-icon.png");
+        String totalBarang  = getTotalBarang();
+        String totalKategori = getTotalKategori();
+        String stokKritis   = getStokKritis();
+
+        // Tampilkan ke StatCard
+        statCard1.setData("TOTAL BARANG",  totalBarang,   new java.awt.Color(220, 225, 255), "assets/barang-icon.png");
+        statCard2.setData("KATEGORI",      totalKategori, new java.awt.Color(160, 250, 200), "assets/category-icon.png");
+        statCard3.setData("STOK KRITIS",   stokKritis,    new java.awt.Color(255, 210, 210), "assets/danger-icon.png");
     }
 
     private void loadDataBarang() {
@@ -344,6 +345,7 @@ public class ManajemenBarang extends javax.swing.JPanel {
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) return rs.getInt(1) + " Barang";
+            System.out.println(rs.getInt(1));
         } catch (Exception e) { e.printStackTrace(); }
         return "0 Barang";
     }

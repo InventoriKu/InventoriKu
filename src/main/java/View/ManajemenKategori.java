@@ -20,9 +20,7 @@ public class ManajemenKategori extends javax.swing.JPanel {
 
     public ManajemenKategori() {
         initComponents();
-        db.koneksi.getConnection();
-        
-        statCard1.setData("KATEGORI", "12", new java.awt.Color(160, 250, 200), "assets/category-icon.png");
+        db.koneksi.getConnection();              
 
         dataTable1.setSearchPlaceholder("Cari Kategori...");
         dataTable1.setButtonText("Tambah Kategori");
@@ -151,8 +149,8 @@ public class ManajemenKategori extends javax.swing.JPanel {
     }
     
     private void refreshStatCard() {
-        statCard1.setData("TOTAL KATEGORI", getTotalKategori(), new java.awt.Color(160, 250, 200), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\category-icon.png");
-        statCard2.setData("BARANG TERDAFTAR", getTotalBarang(), new java.awt.Color(220, 225, 255), "C:\\Users\\HP\\Documents\\NetBeansProjects\\InventoriKu\\src\\main\\java\\assets\\barang-icon.png");
+        statCard1.setData("TOTAL KATEGORI", getTotalKategori(), new java.awt.Color(160, 250, 200), "assets/category-icon.png");
+        statCard2.setData("BARANG TERDAFTAR", getTotalBarang(), new java.awt.Color(220, 225, 255), "assets/barang-icon.png");
     }
 
     private void loadDataKategori() {

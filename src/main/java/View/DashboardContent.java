@@ -4,6 +4,10 @@
  */
 package View;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
 /**
  *
  * @author farre
@@ -22,13 +26,46 @@ public class DashboardContent extends javax.swing.JPanel {
         // Pastikan panel mengisi penuh
         setPreferredSize(null);
         setLayout(new java.awt.GridLayout(2, 2, 20, 20));
-        
-        statDashboard5.setData("Total Barang", "1,284", " Unit", new java.awt.Color(220, 225, 255), "assets/barang-icon.png");
-        statDashboard6.setData("Kategori", "24", " Grup", new java.awt.Color(200, 230, 200), "assets/category-icon.png");
-        statDashboard7.setData("Stok Rendah", "18", " Item", new java.awt.Color(255, 200, 200), "assets/danger-icon.png");
-        statDashboard8.setData("Aktivitas Hari Ini", "45", " Log", new java.awt.Color(255, 220, 180), "assets/stats-up-icon.png");
+                
+        refreshStatCard();
+        statDashboard4.setData("Aktivitas Hari Ini", "45", " Log", new java.awt.Color(255, 220, 180), "assets/stats-up-icon.png");
+    }
+    
+    private void refreshStatCard() {
+        statDashboard1.setData("TOTAL KATEGORI", getTotalKategori()," Grup", new java.awt.Color(160, 250, 200), "assets/category-icon.png");
+        statDashboard2.setData("BARANG TERDAFTAR", getTotalBarang()," Unit", new java.awt.Color(220, 225, 255), "assets/barang-icon.png");
+        statDashboard3.setData("Stok Rendah", getStokKritis(), " Item", new java.awt.Color(255, 200, 200), "assets/danger-icon.png");
     }
 
+    private String getTotalKategori() {
+        try {
+            Connection conn = db.koneksi.getConnection();
+            ResultSet rs = conn.createStatement().executeQuery("SELECT COUNT(*) FROM kategori");
+            if (rs.next()) return String.valueOf(rs.getInt(1));
+        } catch (Exception e) { e.printStackTrace(); }
+        return "0";
+    }
+
+    private String getTotalBarang() {
+        try {
+            Connection conn = db.koneksi.getConnection();
+            ResultSet rs = conn.createStatement().executeQuery("SELECT COUNT(*) FROM barang");
+            if (rs.next()) return String.valueOf(rs.getInt(1));
+        } catch (Exception e) { e.printStackTrace(); }
+        return "0";
+    }
+    
+    private String getStokKritis() {
+        try {
+            Connection conn = db.koneksi.getConnection();
+            String sql = "SELECT COUNT(*) FROM barang WHERE stok <= stok_minimum";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1) + " Barang";
+            System.out.println(rs.getInt(1));
+        } catch (Exception e) { e.printStackTrace(); }
+        return "0 Barang";
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -38,23 +75,23 @@ public class DashboardContent extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        statDashboard5 = new Components.StatDashboard();
-        statDashboard6 = new Components.StatDashboard();
-        statDashboard7 = new Components.StatDashboard();
-        statDashboard8 = new Components.StatDashboard();
+        statDashboard1 = new Components.StatDashboard();
+        statDashboard2 = new Components.StatDashboard();
+        statDashboard3 = new Components.StatDashboard();
+        statDashboard4 = new Components.StatDashboard();
 
         setLayout(new java.awt.GridLayout(2, 2));
-        add(statDashboard5);
-        add(statDashboard6);
-        add(statDashboard7);
-        add(statDashboard8);
+        add(statDashboard1);
+        add(statDashboard2);
+        add(statDashboard3);
+        add(statDashboard4);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private Components.StatDashboard statDashboard5;
-    private Components.StatDashboard statDashboard6;
-    private Components.StatDashboard statDashboard7;
-    private Components.StatDashboard statDashboard8;
+    private Components.StatDashboard statDashboard1;
+    private Components.StatDashboard statDashboard2;
+    private Components.StatDashboard statDashboard3;
+    private Components.StatDashboard statDashboard4;
     // End of variables declaration//GEN-END:variables
 }

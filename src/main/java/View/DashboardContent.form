@@ -19,13 +19,13 @@
     <Property name="rows" type="int" value="2"/>
   </Layout>
   <SubComponents>
-    <Component class="Components.StatDashboard" name="statDashboard5">
+    <Component class="Components.StatDashboard" name="statDashboard1">
     </Component>
-    <Component class="Components.StatDashboard" name="statDashboard6">
+    <Component class="Components.StatDashboard" name="statDashboard2">
     </Component>
-    <Component class="Components.StatDashboard" name="statDashboard7">
+    <Component class="Components.StatDashboard" name="statDashboard3">
     </Component>
-    <Component class="Components.StatDashboard" name="statDashboard8">
+    <Component class="Components.StatDashboard" name="statDashboard4">
     </Component>
   </SubComponents>
 </Form>
