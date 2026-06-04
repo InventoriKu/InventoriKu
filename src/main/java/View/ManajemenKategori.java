@@ -21,6 +21,8 @@ public class ManajemenKategori extends javax.swing.JPanel {
     public ManajemenKategori() {
         initComponents();
         db.koneksi.getConnection();
+        
+        statCard1.setData("KATEGORI", "12", new java.awt.Color(160, 250, 200), "assets/category-icon.png");
 
         dataTable1.setSearchPlaceholder("Cari Kategori...");
         dataTable1.setButtonText("Tambah Kategori");

@@ -24,9 +24,9 @@ public class DashboardContent extends javax.swing.JPanel {
         setLayout(new java.awt.GridLayout(2, 2, 20, 20));
         
         statDashboard5.setData("Total Barang", "1,284", " Unit", new java.awt.Color(220, 225, 255), "assets/barang-icon.png");
-        statDashboard6.setData("Kategori", "24", " Grup", new java.awt.Color(200, 230, 200), "assets/kategori-icon.png");
-        statDashboard7.setData("Stok Rendah", "18", " Item", new java.awt.Color(255, 200, 200), "assets/warning-icon.png");
-        statDashboard8.setData("Aktivitas Hari Ini", "45", " Log", new java.awt.Color(255, 220, 180), "assets/activity-icon.png");
+        statDashboard6.setData("Kategori", "24", " Grup", new java.awt.Color(200, 230, 200), "assets/category-icon.png");
+        statDashboard7.setData("Stok Rendah", "18", " Item", new java.awt.Color(255, 200, 200), "assets/danger-icon.png");
+        statDashboard8.setData("Aktivitas Hari Ini", "45", " Log", new java.awt.Color(255, 220, 180), "assets/stats-up-icon.png");
     }
 
     /**

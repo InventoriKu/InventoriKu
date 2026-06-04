@@ -40,30 +40,14 @@ public class MainFrame extends javax.swing.JFrame {
         @Override
         public void onMenuClicked(String menuName) {
             if (menuName.equals("ManajemenBarang")) {
-                
-                View.ManajemenBarang halamanBarang = new View.ManajemenBarang();
-                pnlMainContent.removeAll();
-                pnlMainContent.setLayout(new java.awt.BorderLayout());
-                pnlMainContent.add(halamanBarang, java.awt.BorderLayout.CENTER);
-                halamanBarang.setSize(pnlMainContent.getSize());
-                
-                // Refresh UI
-                pnlMainContent.revalidate();
-                pnlMainContent.repaint();
-                
+                showManajemenBarang();                         
+            } else if (menuName.equals("Dashboard")) {
+                showDashboard();                 
             } else if (menuName.equals("ManajemenKategori")) {
-                
-                View.ManajemenKategori halamanKategori = new View.ManajemenKategori();
-                pnlMainContent.removeAll();
-                pnlMainContent.setLayout(new java.awt.BorderLayout());
-                pnlMainContent.add(halamanKategori, java.awt.BorderLayout.CENTER);
-                halamanKategori.setSize(pnlMainContent.getSize());
-                
-                // Refresh UI
-                pnlMainContent.revalidate();
-                pnlMainContent.repaint();
-                
-            }
+                showManajemenKategori();             
+            } else if (menuName.equals("ManajemenStok")) {
+                showManajemenStok();             
+            } 
         }
     });
     }
@@ -83,9 +67,25 @@ public class MainFrame extends javax.swing.JFrame {
     private void showManajemenBarang() {
         View.ManajemenBarang halamanBarang = new View.ManajemenBarang();
         pnlMainContent.removeAll();
+        pnlMainContent.setLayout(new java.awt.BorderLayout());
         pnlMainContent.add(halamanBarang, java.awt.BorderLayout.CENTER);
+        halamanBarang.setSize(pnlMainContent.getSize());
+
+        // Refresh UI
         pnlMainContent.revalidate();
         pnlMainContent.repaint();
+    }
+    
+    private void showManajemenKategori() {
+        View.ManajemenKategori halamanKategori = new View.ManajemenKategori();
+        pnlMainContent.removeAll();
+        pnlMainContent.setLayout(new java.awt.BorderLayout());
+        pnlMainContent.add(halamanKategori, java.awt.BorderLayout.CENTER);
+        halamanKategori.setSize(pnlMainContent.getSize());
+
+        // Refresh UI
+        pnlMainContent.revalidate();
+        pnlMainContent.repaint();    
     }
     
     private void showManajemenStok() {

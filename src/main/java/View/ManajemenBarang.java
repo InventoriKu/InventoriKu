@@ -90,6 +90,10 @@ public class ManajemenBarang extends javax.swing.JPanel {
 
         refreshStatCard();
         loadDataBarang(tblBarang.getCurrentPage(), tblBarang.getLimitPerPage());
+        
+        statCard1.setData("TOTAL BARANG", "1,284", new java.awt.Color(220, 225, 255), "assets/barang-icon.png");
+        statCard2.setData("KATEGORI", "12", new java.awt.Color(160, 250, 200), "assets/category-icon.png");
+        statCard3.setData("STOK KRITIS", "8 Barang", new java.awt.Color(255, 210, 210), "assets/danger-icon.png");        
     }
     
     private void loadKategoriFilter() {
