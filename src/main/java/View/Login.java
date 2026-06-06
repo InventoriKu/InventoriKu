@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javax.swing.JOptionPane;
+import Utils.Session;
 
 /**
  *
@@ -262,13 +263,14 @@ public class Login extends javax.swing.JFrame {
 
             if (rs.next()) {
 
-                String nama = rs.getString("nama_lengkap");
-                String role = rs.getString("role");
+                Session.userId = rs.getInt("id_user");
+                Session.nama = rs.getString("nama_lengkap");
+                Session.role = rs.getString("role");
 
                 JOptionPane.showMessageDialog(this,
-                        "Login berhasil!\nSelamat datang " + nama);
+                        "Login berhasil!\nSelamat datang " + Session.nama);
 
-                new MainFrame(nama, role).setVisible(true);
+                new MainFrame().setVisible(true);
 
                 this.dispose();
 

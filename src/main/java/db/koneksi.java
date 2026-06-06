@@ -86,6 +86,7 @@ public class koneksi {
                     jumlah INT NOT NULL,
                     supplier VARCHAR(100),
                     tanggal TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    catatan VARCHAR(100),
                     FOREIGN KEY (id_barang)
                     REFERENCES barang(id_barang),
                     FOREIGN KEY (id_user)
@@ -100,6 +101,7 @@ public class koneksi {
                     id_user INT,
                     jumlah INT NOT NULL,
                     departemen VARCHAR(100),
+                    catatan VARCHAR(100),                   
                     tanggal TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (id_barang)
                     REFERENCES barang(id_barang),

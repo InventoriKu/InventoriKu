@@ -9,6 +9,8 @@ import db.koneksi;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import Utils.Session;
+import javax.swing.JScrollPane;
 /**
  *
  * @author LENOVO
@@ -19,37 +21,30 @@ public class MainFrame extends javax.swing.JFrame {
     private String nama;
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
-    
-    public MainFrame() {
-        initComponents();
-    }
 
-    public MainFrame(String role, String nama) {
+    public MainFrame() {
 
         initComponents();
         setLocationRelativeTo(null);
         setExtendedState(MainFrame.MAXIMIZED_BOTH);
 
-        this.role = role;
-        this.nama = nama;
-
         setupDashboard();
         showDashboard();
-                                
+
         sidebar1.setSidebarListener(new Sidebar.SidebarListener() {
-        @Override
-        public void onMenuClicked(String menuName) {
-            if (menuName.equals("ManajemenBarang")) {
-                showManajemenBarang();                         
-            } else if (menuName.equals("Dashboard")) {
-                showDashboard();                 
-            } else if (menuName.equals("ManajemenKategori")) {
-                showManajemenKategori();             
-            } else if (menuName.equals("ManajemenStok")) {
-                showManajemenStok();             
-            } 
-        }
-    });
+            @Override
+            public void onMenuClicked(String menuName) {
+                if (menuName.equals("ManajemenBarang")) {
+                    showManajemenBarang();                         
+                } else if (menuName.equals("Dashboard")) {
+                    showDashboard();                 
+                } else if (menuName.equals("ManajemenKategori")) {
+                    showManajemenKategori();             
+                } else if (menuName.equals("ManajemenStok")) {
+                    showManajemenStok();             
+                } 
+            }
+        });
     }
     
     
@@ -89,9 +84,12 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     private void showManajemenStok() {
-        View.ManageStockContent halamanStok = new View.ManageStockContent();
+        View.ManajemenStok halamanStok = new View.ManajemenStok();
         pnlMainContent.removeAll();
-        pnlMainContent.add(halamanStok, java.awt.BorderLayout.CENTER);
+        pnlMainContent.setLayout(new java.awt.BorderLayout());
+        pnlMainContent.add(new javax.swing.JScrollPane(halamanStok), java.awt.BorderLayout.CENTER);
+        halamanStok.setSize(pnlMainContent.getSize());
+        
         pnlMainContent.revalidate();
         pnlMainContent.repaint();
     }
@@ -129,7 +127,7 @@ public class MainFrame extends javax.swing.JFrame {
             );
         }
         
-        sidebar1.setUserInfo(nama, role);
+        sidebar1.setUserInfo(Session.nama, Session.role);
         sidebar1.setMenuListener(e -> {
             String menu = ((javax.swing.JButton) e.getSource()).getText();
         });

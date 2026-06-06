@@ -77,7 +77,70 @@ public class StockTable extends javax.swing.JPanel {
         table.setSelectionForeground(java.awt.Color.BLACK);        
     }
     
-    
+    public void loadStokMasuk() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) table.getModel();
+        model.setRowCount(0);
+
+        // Sesuaikan header jika perlu
+        model.setColumnIdentifiers(new String[]{"Tipe", "Barang", "Jumlah", "Supplier", "Tanggal"});
+
+        try {
+            java.sql.Connection conn = db.koneksi.getConnection();
+            java.sql.PreparedStatement ps = conn.prepareStatement(
+                "SELECT b.nama_barang, sm.jumlah, sm.supplier, sm.tanggal " +
+                "FROM stok_masuk sm JOIN barang b ON sm.id_barang = b.id_barang " +
+                "ORDER BY sm.tanggal DESC"
+            );
+            java.sql.ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    "Masuk",
+                    rs.getString("nama_barang"),
+                    rs.getInt("jumlah"),
+                    rs.getString("supplier"),
+                    rs.getTimestamp("tanggal").toString()                    
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Load data stok keluar dari database
+    public void loadStokKeluar() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) table.getModel();
+        model.setRowCount(0);
+
+        model.setColumnIdentifiers(new String[]{"Tipe", "Barang", "Jumlah", "Departemen", "Tanggal"});
+
+        try {
+            java.sql.Connection conn = db.koneksi.getConnection();
+            java.sql.PreparedStatement ps = conn.prepareStatement(
+                "SELECT b.nama_barang, sk.jumlah, sk.departemen, sk.tanggal " +
+                "FROM stok_keluar sk JOIN barang b ON sk.id_barang = b.id_barang " +
+                "ORDER BY sk.tanggal DESC"
+            );
+            java.sql.ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    "Keluar",
+                    rs.getString("nama_barang"),
+                    rs.getInt("jumlah"),
+                    rs.getString("departemen"),
+                    rs.getTimestamp("tanggal").toString()                    
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Reset header ke default (Tipe, Barang, Jumlah, Supplier/Tujuan, Tanggal)
+    public void resetHeader() {
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) table.getModel();
+        model.setColumnIdentifiers(new String[]{"Tipe", "Barang", "Jumlah", "Supplier/Tujuan", "Tanggal"});
+        model.setRowCount(0);
+    }
     
     public void setupTable(String[] columnNames) {
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) table.getModel();
@@ -150,18 +213,7 @@ public class StockTable extends javax.swing.JPanel {
     }    
     
     // Method untuk mengisi data contoh (sample data)
-    public void loadSampleData() {        
-        
-        Object[][] sampleData = {
-            {"Masuk", "Laptop ThinkPad X1", 15, "PT Maju Jaya", "2024-05-30 10:30"},
-            {"Keluar", "Monitor Dell", 4, "Departemen IT", "2024-05-30 09:15"},
-            {"Masuk", "Mouse Logitech", 50, "PT Sukses Abadi", "2024-05-29 14:20"},
-            {"Keluar", "Keyboard Mechanical", 10, "Departemen HR", "2024-05-29 11:00"},
-            {"Masuk", "SSD 512GB", 25, "PT Teknologi Bersama", "2024-05-28 16:45"}
-        };
-        
-        addRows(sampleData);
-    }
+   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -198,7 +250,6 @@ public class StockTable extends javax.swing.JPanel {
                 return types [columnIndex];
             }
         });
-        table.setEnabled(false);
         table.setFocusable(false);
         jScrollPane1.setViewportView(table);
         if (table.getColumnModel().getColumnCount() > 0) {

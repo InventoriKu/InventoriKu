@@ -11,7 +11,7 @@ import java.awt.CardLayout;
  *
  * @author farre
  */
-public class ManageStockContent extends javax.swing.JPanel {
+public class ManajemenStok extends javax.swing.JPanel {
 
     /**
      * Creates new form ManageStockContent
@@ -20,7 +20,7 @@ public class ManageStockContent extends javax.swing.JPanel {
     private Components.InStockTransaction inStockPanel;
     private Components.OutStockTransaction outStockPanel;
     
-    public ManageStockContent() {
+    public ManajemenStok() {
         initComponents();      
         
         mainContent.setLayout(new CardLayout());
@@ -58,6 +58,8 @@ public class ManageStockContent extends javax.swing.JPanel {
         label2 = new java.awt.Label();
         toggleTransactionButton2 = new Components.ToggleTransactionButton();
         mainContent = new javax.swing.JPanel();
+
+        setPreferredSize(null);
 
         label2.setFont(new java.awt.Font("Dialog", 1, 36)); // NOI18N
         label2.setForeground(new java.awt.Color(30, 58, 138));

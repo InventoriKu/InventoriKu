@@ -20,6 +20,73 @@ public class StockForm extends javax.swing.JPanel {
         initComponents();
         changeInputUI(inputTarget);
     }
+    
+    public void loadBarangData() {
+        javax.swing.JComboBox cb = (javax.swing.JComboBox) inputBarang;
+        cb.removeAllItems();
+        try {
+            java.sql.Connection conn = db.koneksi.getConnection();
+            java.sql.ResultSet rs = conn.createStatement().executeQuery(
+                "SELECT id_barang, nama_barang FROM barang ORDER BY nama_barang"
+            );
+            while (rs.next()) {
+                cb.addItem(new BarangItem(rs.getInt("id_barang"), rs.getString("nama_barang")));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Load supplier/departemen (untuk stok masuk: supplier unik dari barang)
+    public void loadSupplierData() {
+        inputTarget.removeAllItems();
+        try {
+            java.sql.Connection conn = db.koneksi.getConnection();
+            java.sql.ResultSet rs = conn.createStatement().executeQuery(
+                "SELECT DISTINCT supplier FROM barang WHERE supplier IS NOT NULL AND supplier != '' ORDER BY supplier"
+            );
+            while (rs.next()) {
+                inputTarget.addItem(rs.getString("supplier"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Load departemen (untuk stok keluar)
+    public void loadDepartemenData() {
+        inputTarget.removeAllItems();
+        inputTarget.addItem("Departemen IT");
+        inputTarget.addItem("Departemen HR");
+        inputTarget.addItem("Departemen Finance");
+        inputTarget.addItem("Departemen Marketing");
+        inputTarget.addItem("Departemen Produksi");
+    }
+
+    // Ambil id_barang yang dipilih
+    public int getIdBarang() {
+        Object item = inputBarang.getSelectedItem();
+        if (item instanceof BarangItem) {
+            return ((BarangItem) item).id;
+        }
+        return -1;
+    }
+
+    // Inner class untuk combo box barang
+    public static class BarangItem {
+        public int id;
+        public String nama;
+
+        public BarangItem(int id, String nama) {
+            this.id = id;
+            this.nama = nama;
+        }
+
+        @Override
+        public String toString() {
+            return nama;
+        }
+    }
 
     private void changeInputUI(javax.swing.JComboBox<?> comboBox) {
         comboBox.setUI(new BasicComboBoxUI() {
@@ -152,7 +219,6 @@ public class StockForm extends javax.swing.JPanel {
         inputJumlah.addActionListener(this::inputJumlahActionPerformed);
 
         inputBarang.setEditable(true);
-        inputBarang.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         inputBarang.addActionListener(this::inputBarangActionPerformed);
 
         inoutCatatan.setColumns(20);

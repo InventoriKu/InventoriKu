@@ -9,6 +9,9 @@ import db.koneksi;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import Utils.Session;
+import javax.swing.JOptionPane;
+import java.sql.PreparedStatement;
 
 /**
  *
@@ -23,12 +26,99 @@ public class OutStockTransaction extends javax.swing.JPanel {
         initComponents();
         stockForm2.setJudul("Stok Keluar");
         stockForm2.setLabelTarget("DEPARTEMEN TUJUAN");
-        stockTable1.loadSampleData();
+        stockForm2.loadBarangData();
+        stockForm2.loadDepartemenData();
+
+        // Setup tabel
+        stockTable1.loadStokKeluar();
+        stockTable1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 40));
+
+        // Listener tombol konfirmasi
+        stockForm2.setConfirmation(e -> handleStockOut());
     }
     
-   
-    
-    
+   private void handleStockOut() {
+        // Validasi
+        String jumlahStr = stockForm2.getJumlah();
+        if (jumlahStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Jumlah tidak boleh kosong!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int jumlah;
+        try {
+            jumlah = Integer.parseInt(jumlahStr);
+            if (jumlah <= 0) throw new NumberFormatException();
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Jumlah harus berupa angka positif!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int idBarang = stockForm2.getIdBarang();
+        if (idBarang == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih barang terlebih dahulu!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String departemen = stockForm2.getTarget();
+        String catatan = stockForm2.getCatatan();
+        java.util.Date tanggal = stockForm2.getTanggal();
+
+        try {
+            java.sql.Connection conn = db.koneksi.getConnection();
+            conn.setAutoCommit(false); // Mulai transaksi
+
+            // Cek stok cukup
+            java.sql.PreparedStatement psCek = conn.prepareStatement("SELECT stok FROM barang WHERE id_barang = ?");
+            psCek.setInt(1, idBarang);
+            java.sql.ResultSet rs = psCek.executeQuery();
+            if (rs.next()) {
+                int stokSekarang = rs.getInt("stok");
+                if (stokSekarang < jumlah) {
+                    conn.rollback();
+                    JOptionPane.showMessageDialog(this, "Stok tidak mencukupi! Stok saat ini: " + stokSekarang, "Peringatan", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+            }
+
+            // 1. Insert ke stok_keluar
+            String sqlInsert = "INSERT INTO stok_keluar (id_barang, id_user, jumlah, departemen, catatan, tanggal) VALUES (?, ?, ?, ?, ?, ?)";
+            java.sql.PreparedStatement psInsert = conn.prepareStatement(sqlInsert);
+            psInsert.setInt(1, idBarang);
+            psInsert.setInt(2, Session.userId);
+            psInsert.setInt(3, jumlah);
+            psInsert.setString(4, departemen);
+            psInsert.setString(5, catatan.isEmpty() ? null : catatan);
+            if (tanggal != null) {
+                psInsert.setDate(6, new java.sql.Date(tanggal.getTime()));
+            } else {
+                psInsert.setDate(6, new java.sql.Date(System.currentTimeMillis()));
+            }
+            psInsert.executeUpdate();
+
+            // 2. Update stok barang (kurangi)
+            String sqlUpdate = "UPDATE barang SET stok = stok - ? WHERE id_barang = ?";
+            java.sql.PreparedStatement psUpdate = conn.prepareStatement(sqlUpdate);
+            psUpdate.setInt(1, jumlah);
+            psUpdate.setInt(2, idBarang);
+            psUpdate.executeUpdate();
+
+            conn.commit(); // Simpan perubahan
+            conn.setAutoCommit(true);
+
+            JOptionPane.showMessageDialog(this, "Stok keluar berhasil dicatat!");
+
+            // Refresh tabel dan reset form
+            stockTable1.loadStokKeluar();
+            stockForm2.resetForm();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal mencatat stok keluar: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
