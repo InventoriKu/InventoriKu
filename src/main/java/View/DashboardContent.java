@@ -27,14 +27,14 @@ public class DashboardContent extends javax.swing.JPanel {
         setPreferredSize(null);
         setLayout(new java.awt.GridLayout(2, 2, 20, 20));
                 
-        refreshStatCard();
-        statDashboard4.setData("Aktivitas Hari Ini", "45", " Log", new java.awt.Color(255, 220, 180), "assets/stats-up-icon.png");
+        refreshStatCard();        
     }
     
     private void refreshStatCard() {
         statDashboard1.setData("TOTAL KATEGORI", getTotalKategori()," Grup", new java.awt.Color(160, 250, 200), "assets/category-icon.png");
         statDashboard2.setData("BARANG TERDAFTAR", getTotalBarang()," Unit", new java.awt.Color(220, 225, 255), "assets/barang-icon.png");
-        statDashboard3.setData("Stok Rendah", getStokKritis(), " Item", new java.awt.Color(255, 200, 200), "assets/danger-icon.png");
+        statDashboard3.setData("STOK RENDAH", getStokKritis(), " Unit", new java.awt.Color(255, 200, 200), "assets/danger-icon.png");
+        statDashboard4.setData("AKTIVITAS HARI INI",getTotalLog() , " Log", new java.awt.Color(255, 220, 180), "assets/stats-up-icon.png");
     }
 
     private String getTotalKategori() {
@@ -61,10 +61,21 @@ public class DashboardContent extends javax.swing.JPanel {
             String sql = "SELECT COUNT(*) FROM barang WHERE stok <= stok_minimum";
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt(1) + " Barang";
+            if (rs.next()) return rs.getInt(1)+ "";
             System.out.println(rs.getInt(1));
         } catch (Exception e) { e.printStackTrace(); }
         return "0 Barang";
+    }
+    
+    private String getTotalLog() {
+        try {
+            Connection conn = db.koneksi.getConnection();
+            ResultSet rs = conn.createStatement().executeQuery(
+                "SELECT (SELECT COUNT(*) FROM stok_masuk) + (SELECT COUNT(*) FROM stok_keluar) AS total"
+            );
+            if (rs.next()) return String.valueOf(rs.getInt("total"));
+        } catch (Exception e) { e.printStackTrace(); }
+        return "0";
     }
     /**
      * This method is called from within the constructor to initialize the form.

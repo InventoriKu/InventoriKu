@@ -30,7 +30,7 @@ public class OutStockTransaction extends javax.swing.JPanel {
         stockForm2.loadDepartemenData();
 
         // Setup tabel
-        stockTable1.loadStokKeluar();
+        stockTable1.loadData();
         stockTable1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 40));
 
         // Listener tombol konfirmasi
@@ -109,7 +109,7 @@ public class OutStockTransaction extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Stok keluar berhasil dicatat!");
 
             // Refresh tabel dan reset form
-            stockTable1.loadStokKeluar();
+            stockTable1.loadData();
             stockForm2.resetForm();
 
         } catch (Exception e) {

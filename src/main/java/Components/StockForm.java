@@ -16,9 +16,13 @@ public class StockForm extends javax.swing.JPanel {
     /**
      * Creates new form StockForm
      */
+    private java.util.Date currentDate;
+    private java.text.SimpleDateFormat sdfTampilan = new java.text.SimpleDateFormat("dd/MM/yyyy");
+    private java.text.SimpleDateFormat sdfDatabase = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    
     public StockForm() {
-        initComponents();
-        changeInputUI(inputTarget);
+        initComponents();  
+        setTanggalOtomatis();
     }
     
     public void loadBarangData() {
@@ -88,27 +92,6 @@ public class StockForm extends javax.swing.JPanel {
         }
     }
 
-    private void changeInputUI(javax.swing.JComboBox<?> comboBox) {
-        comboBox.setUI(new BasicComboBoxUI() {
-            @Override
-            protected JButton createArrowButton() {
-                JButton button = new JButton() {
-                    @Override
-                    public int getWidth() {
-                        return 0;
-                    }
-                };
-                button.setVisible(false);
-                return button;
-            }
-            
-            @Override
-            protected void installDefaults() {
-                super.installDefaults();
-                comboBox.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.GRAY));
-            }
-        });
-    }        
     
     public void setJudul(String judul) {
         label1.setText(judul);
@@ -143,8 +126,19 @@ public class StockForm extends javax.swing.JPanel {
         return inputJumlah.getText().trim();
     }
 
-    public java.util.Date getTanggal() {
-        return inputTanggal.getDate();
+    public java.util.Date getTanggal() {        
+        try {
+            
+            return sdfDatabase.parse(inputTanggal.getText());
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
+    private void setTanggalOtomatis() {
+        currentDate = new java.util.Date(); 
+        inputTanggal.setText(sdfTampilan.format(currentDate));
     }
 
     public String getCatatan() {
@@ -153,8 +147,7 @@ public class StockForm extends javax.swing.JPanel {
 
     public void resetForm() {
         inputJumlah.setText("");
-        inoutCatatan.setText("");
-        inputTanggal.setDate(null);
+        inoutCatatan.setText("");        
     }
 
     // Pasang listener tombol dari luar
@@ -185,7 +178,7 @@ public class StockForm extends javax.swing.JPanel {
         inputBarang = new javax.swing.JComboBox<>();
         jScrollPane1 = new javax.swing.JScrollPane();
         inoutCatatan = new javax.swing.JTextArea();
-        inputTanggal = new com.toedter.calendar.JDateChooser();
+        inputTanggal = new javax.swing.JTextField();
         confirmButton = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -225,10 +218,22 @@ public class StockForm extends javax.swing.JPanel {
         inoutCatatan.setRows(5);
         jScrollPane1.setViewportView(inoutCatatan);
 
+        inputTanggal.setEditable(false);
+        inputTanggal.setBackground(new java.awt.Color(255, 255, 255));
+        inputTanggal.addActionListener(this::inputTanggalActionPerformed);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel6))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE)
+            .addComponent(inputTarget, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(inputBarang, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -236,22 +241,12 @@ public class StockForm extends javax.swing.JPanel {
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel6))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE)
-            .addComponent(inputTarget, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(inputJumlah, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(6, 6, 6)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(inputTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE))))
-            .addComponent(inputBarang, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1)
+                    .addComponent(inputTanggal)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -266,9 +261,9 @@ public class StockForm extends javax.swing.JPanel {
                     .addComponent(jLabel2)
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(inputTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(inputJumlah, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE, false)
+                    .addComponent(inputJumlah, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
+                    .addComponent(inputTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel7)
                 .addGap(9, 9, 9)
@@ -293,9 +288,9 @@ public class StockForm extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE)
-                    .addComponent(confirmButton, javax.swing.GroupLayout.DEFAULT_SIZE, 309, Short.MAX_VALUE))
-                .addContainerGap(20, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE)
+                    .addComponent(confirmButton, javax.swing.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -324,13 +319,17 @@ public class StockForm extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_inputJumlahActionPerformed
 
+    private void inputTanggalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputTanggalActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_inputTanggalActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton confirmButton;
     private javax.swing.JTextArea inoutCatatan;
     private javax.swing.JComboBox<String> inputBarang;
     private javax.swing.JTextField inputJumlah;
-    private com.toedter.calendar.JDateChooser inputTanggal;
+    private javax.swing.JTextField inputTanggal;
     private javax.swing.JComboBox<String> inputTarget;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

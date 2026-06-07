@@ -207,7 +207,7 @@ public class ManajemenKategori extends javax.swing.JPanel {
         try {
             Connection conn = db.koneksi.getConnection();
             ResultSet rs = conn.createStatement().executeQuery("SELECT COUNT(*) FROM kategori");
-            if (rs.next()) return String.valueOf(rs.getInt(1));
+            if (rs.next()) return String.valueOf(rs.getInt(1))+ " Grup";
         } catch (Exception e) { e.printStackTrace(); }
         return "0";
     }
@@ -216,7 +216,7 @@ public class ManajemenKategori extends javax.swing.JPanel {
         try {
             Connection conn = db.koneksi.getConnection();
             ResultSet rs = conn.createStatement().executeQuery("SELECT COUNT(*) FROM barang");
-            if (rs.next()) return String.valueOf(rs.getInt(1));
+            if (rs.next()) return String.valueOf(rs.getInt(1))+ " Unit";
         } catch (Exception e) { e.printStackTrace(); }
         return "0";
     }

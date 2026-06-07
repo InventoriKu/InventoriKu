@@ -116,6 +116,17 @@ public class koneksi {
                 VALUES
                 (1, 'admin', 'admin123', 'Administrator', 'ADMIN')
             """);
+            
+            try {
+                stmt.executeUpdate("ALTER TABLE stok_masuk ADD COLUMN catatan VARCHAR(100)");
+                stmt.executeUpdate("ALTER TABLE stok_keluar ADD COLUMN catatan VARCHAR(100)");
+            } catch (SQLException e) {
+                if (e.getMessage().contains("Duplicate column name")) {
+                    System.out.println("Kolom sudah ada, skip ALTER");
+                } else {
+                    throw e; // Error lain, lempar lagi
+                }
+            }
 
             System.out.println("Tabel berhasil dibuat!");
 
@@ -123,5 +134,7 @@ public class koneksi {
             System.out.println("Gagal membuat tabel!");
             e.printStackTrace();
         }
+        
+        
     }
 }

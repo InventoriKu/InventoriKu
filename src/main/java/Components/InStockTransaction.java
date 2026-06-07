@@ -31,7 +31,7 @@ public class InStockTransaction extends javax.swing.JPanel {
         stockForm2.loadSupplierData();
 
         // Setup tabel
-        stockTable1.loadStokMasuk();
+        stockTable1.loadData();
         stockTable1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 40));
 
         // Listener tombol konfirmasi
@@ -97,7 +97,7 @@ public class InStockTransaction extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Stok masuk berhasil dicatat!");
 
             // Refresh tabel dan reset form
-            stockTable1.loadStokMasuk();
+            stockTable1.loadData();
             stockForm2.resetForm();
 
         } catch (Exception e) {

@@ -77,70 +77,35 @@ public class StockTable extends javax.swing.JPanel {
         table.setSelectionForeground(java.awt.Color.BLACK);        
     }
     
-    public void loadStokMasuk() {
+    public void loadData() {
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) table.getModel();
         model.setRowCount(0);
-
-        // Sesuaikan header jika perlu
-        model.setColumnIdentifiers(new String[]{"Tipe", "Barang", "Jumlah", "Supplier", "Tanggal"});
 
         try {
             java.sql.Connection conn = db.koneksi.getConnection();
             java.sql.PreparedStatement ps = conn.prepareStatement(
-                "SELECT b.nama_barang, sm.jumlah, sm.supplier, sm.tanggal " +
+                "SELECT 'Masuk' AS tipe, b.nama_barang, sm.jumlah, sm.supplier AS target, sm.tanggal " +
                 "FROM stok_masuk sm JOIN barang b ON sm.id_barang = b.id_barang " +
-                "ORDER BY sm.tanggal DESC"
-            );
-            java.sql.ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                model.addRow(new Object[]{
-                    "Masuk",
-                    rs.getString("nama_barang"),
-                    rs.getInt("jumlah"),
-                    rs.getString("supplier"),
-                    rs.getTimestamp("tanggal").toString()                    
-                });
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Load data stok keluar dari database
-    public void loadStokKeluar() {
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) table.getModel();
-        model.setRowCount(0);
-
-        model.setColumnIdentifiers(new String[]{"Tipe", "Barang", "Jumlah", "Departemen", "Tanggal"});
-
-        try {
-            java.sql.Connection conn = db.koneksi.getConnection();
-            java.sql.PreparedStatement ps = conn.prepareStatement(
-                "SELECT b.nama_barang, sk.jumlah, sk.departemen, sk.tanggal " +
+                "UNION ALL " +
+                "SELECT 'Keluar' AS tipe, b.nama_barang, sk.jumlah, sk.departemen AS target, sk.tanggal " +
                 "FROM stok_keluar sk JOIN barang b ON sk.id_barang = b.id_barang " +
-                "ORDER BY sk.tanggal DESC"
+                "ORDER BY tanggal DESC"
             );
             java.sql.ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 model.addRow(new Object[]{
-                    "Keluar",
+                    rs.getString("tipe"),
                     rs.getString("nama_barang"),
                     rs.getInt("jumlah"),
-                    rs.getString("departemen"),
-                    rs.getTimestamp("tanggal").toString()                    
+                    rs.getString("target"),
+                    rs.getTimestamp("tanggal").toString()
                 });
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    // Reset header ke default (Tipe, Barang, Jumlah, Supplier/Tujuan, Tanggal)
-    public void resetHeader() {
-        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) table.getModel();
-        model.setColumnIdentifiers(new String[]{"Tipe", "Barang", "Jumlah", "Supplier/Tujuan", "Tanggal"});
-        model.setRowCount(0);
-    }
+    // Reset header ke default (Tipe, Barang, Jumlah, Supplier/Tujuan, Tanggal)    
     
     public void setupTable(String[] columnNames) {
         javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) table.getModel();

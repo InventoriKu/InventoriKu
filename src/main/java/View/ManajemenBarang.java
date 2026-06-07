@@ -344,7 +344,7 @@ public class ManajemenBarang extends javax.swing.JPanel {
             String sql = "SELECT COUNT(*) FROM barang WHERE stok <= stok_minimum";
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) return rs.getInt(1) + " Barang";
+            if (rs.next()) return rs.getInt(1) + " Unit";
             System.out.println(rs.getInt(1));
         } catch (Exception e) { e.printStackTrace(); }
         return "0 Barang";
@@ -356,7 +356,7 @@ public class ManajemenBarang extends javax.swing.JPanel {
             String sql = "SELECT COUNT(*) FROM kategori";
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) return String.valueOf(rs.getInt(1));
+            if (rs.next()) return String.valueOf(rs.getInt(1))+ " Grup";
         } catch (Exception e) { e.printStackTrace(); }
         return "0";
     }
@@ -367,7 +367,7 @@ public class ManajemenBarang extends javax.swing.JPanel {
             String sql = "SELECT COUNT(*) FROM barang";
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) return String.valueOf(rs.getInt(1));
+            if (rs.next()) return String.valueOf(rs.getInt(1))+ " Unit";
         } catch (Exception e) { e.printStackTrace(); }
         return "0";
     }
