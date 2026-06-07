@@ -16,6 +16,11 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.DefaultTableModel;
+import java.awt.print.PrinterException;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.JTable;
 /**
  *
  * @author HP
@@ -63,6 +68,10 @@ public class ManajemenBarang extends javax.swing.JPanel {
             public void keyReleased(java.awt.event.KeyEvent e) {
                 loadDataBarang();
             }
+        });
+        
+        tblBarang.getBtnCetak().addActionListener(e -> {
+            cetakLaporan();
         });
 
         tblBarang.getComboBox().addActionListener(e -> {
@@ -371,6 +380,114 @@ public class ManajemenBarang extends javax.swing.JPanel {
         } catch (Exception e) { e.printStackTrace(); }
         return "0";
     }
+    
+    private void cetakLaporan() {
+        try {
+            String keyword = "";
+            if (tblBarang.getSearchField() != null && tblBarang.getSearchField().getText() != null) {
+                keyword = tblBarang.getSearchField().getText().trim();
+                if (keyword.equalsIgnoreCase("Cari Barang...")) {
+                    keyword = "";
+                }
+            }
+
+            String selectedKategori = "Semua Kategori";
+            if (tblBarang.getComboBox() != null && tblBarang.getComboBox().getSelectedItem() != null) {
+                selectedKategori = tblBarang.getComboBox().getSelectedItem().toString();
+            }
+
+            String[] printKolom = {"Nama Barang", "Kategori", "Stok Saat Ini", "Supplier"};
+            DefaultTableModel printModel = new DefaultTableModel(printKolom, 0);
+
+            Connection conn = db.koneksi.getConnection();
+            StringBuilder dataSql = new StringBuilder("""
+                SELECT
+                    b.nama_barang,
+                    k.nama_kategori,
+                    b.stok,
+                    b.stok_minimum,
+                    b.supplier
+                FROM barang b
+                LEFT JOIN kategori k ON b.id_kategori = k.id_kategori
+                WHERE 1=1 
+            """);
+
+            if (!keyword.isEmpty()) {
+                dataSql.append(" AND (b.nama_barang LIKE ? OR b.supplier LIKE ?) ");
+            }
+            if (!selectedKategori.equals("Semua Kategori")) {
+                dataSql.append(" AND k.nama_kategori = ? ");
+            }
+
+            PreparedStatement psData = conn.prepareStatement(dataSql.toString());
+            int paramIndex = 1;
+            
+            if (!keyword.isEmpty()) {
+                psData.setString(paramIndex++, "%" + keyword + "%");
+                psData.setString(paramIndex++, "%" + keyword + "%");
+            }
+            if (!selectedKategori.equals("Semua Kategori")) {
+                psData.setString(paramIndex++, selectedKategori);
+            }
+
+            ResultSet rs = psData.executeQuery();
+            while (rs.next()) {
+                int stok = rs.getInt("stok");
+                int stokMin = rs.getInt("stok_minimum");
+                String statusTeks = (stok <= stokMin) ? stok + " (Kritis)" : stok + " (Aman)";
+
+                printModel.addRow(new Object[]{
+                    rs.getString("nama_barang"),
+                    rs.getString("nama_kategori") != null ? rs.getString("nama_kategori") : "-",
+                    statusTeks,
+                    rs.getString("supplier") != null ? rs.getString("supplier") : "-"
+                });
+            }
+
+            if (printModel.getRowCount() == 0) {
+                JOptionPane.showMessageDialog(this, "Tidak ada data yang sesuai untuk dicetak!", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            JTable printTable = new JTable(printModel);
+            printTable.setRowHeight(25);
+            printTable.getTableHeader().setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 12));
+            printTable.setFont(new java.awt.Font("SansSerif", java.awt.Font.PLAIN, 12));
+
+            javax.swing.JFrame tempFrame = new javax.swing.JFrame();
+            tempFrame.setUndecorated(true);
+            tempFrame.add(new javax.swing.JScrollPane(printTable));
+            tempFrame.pack(); 
+
+            String tanggal = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date());
+            MessageFormat header = new MessageFormat("Laporan Data Barang InventoriKu | Dicetak: " + tanggal);
+            MessageFormat footer = new MessageFormat("Halaman {0}");
+
+            JOptionPane.showMessageDialog(this, "Menyiapkan " + printModel.getRowCount() + " baris data. Silakan tunggu dialog Print...", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+
+            boolean isPrinted = printTable.print(
+                JTable.PrintMode.FIT_WIDTH, 
+                header, 
+                footer, 
+                true,   
+                null, 
+                true,   
+                null
+            );
+
+            tempFrame.dispose();
+
+            if (isPrinted) {
+                JOptionPane.showMessageDialog(this, "Laporan berhasil dicetak!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Pencetakan dibatalkan oleh pengguna.", "Dibatalkan", JOptionPane.WARNING_MESSAGE);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal mencetak laporan!\nError: " + e.getMessage(), "Error Print", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -397,9 +514,6 @@ public class ManajemenBarang extends javax.swing.JPanel {
         jPanel1.add(statCard2);
         jPanel1.add(statCard3);
 
-        tblBarang.setEnabled(false);
-        tblBarang.setPreferredSize(new java.awt.Dimension(820, 377));
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -408,7 +522,9 @@ public class ManajemenBarang extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1080, Short.MAX_VALUE)
-                    .addComponent(tblBarang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(tblBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 1064, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -417,8 +533,8 @@ public class ManajemenBarang extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tblBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addComponent(tblBarang, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

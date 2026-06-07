@@ -12,6 +12,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import java.awt.print.PrinterException;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.JTable;
 /**
  *
  * @author LENOVO
@@ -44,6 +49,10 @@ public class ManajemenKategori extends javax.swing.JPanel {
             public void keyReleased(java.awt.event.KeyEvent e) {
                 loadDataKategori();
             }
+        });
+        
+        dataTable1.getBtnCetak().addActionListener(e -> {
+            cetakLaporan();
         });
 
         dataTable1.getBtnTambah().addActionListener(e -> {
@@ -229,6 +238,93 @@ public class ManajemenKategori extends javax.swing.JPanel {
         } catch (Exception e) { e.printStackTrace(); }
         return "0";
     }
+    
+    private void cetakLaporan() {
+        try {
+            String keyword = "";
+            if (dataTable1.getSearchField() != null && dataTable1.getSearchField().getText() != null) {
+                keyword = dataTable1.getSearchField().getText().trim();
+                if (keyword.equalsIgnoreCase("Cari Kategori...")) {
+                    keyword = "";
+                }
+            }
+
+            String[] printKolom = {"Nama Kategori", "Jumlah Barang"};
+            DefaultTableModel printModel = new DefaultTableModel(printKolom, 0);
+
+            Connection conn = db.koneksi.getConnection();
+            StringBuilder dataSql = new StringBuilder("""
+                SELECT k.nama_kategori, COUNT(b.id_barang) AS jumlah_barang 
+                FROM kategori k 
+                LEFT JOIN barang b ON k.id_kategori = b.id_kategori 
+                WHERE 1=1 
+            """);
+
+            if (!keyword.isEmpty()) {
+                dataSql.append(" AND k.nama_kategori LIKE ? ");
+            }
+
+            dataSql.append(" GROUP BY k.id_kategori, k.nama_kategori ");
+
+            PreparedStatement psData = conn.prepareStatement(dataSql.toString());
+
+            if (!keyword.isEmpty()) {
+                psData.setString(1, "%" + keyword + "%");
+            }
+
+            ResultSet rs = psData.executeQuery();
+            while (rs.next()) {
+                printModel.addRow(new Object[]{
+                    rs.getString("nama_kategori") != null ? rs.getString("nama_kategori") : "-",
+                    rs.getInt("jumlah_barang") + " Barang"
+                });
+            }
+
+            if (printModel.getRowCount() == 0) {
+                JOptionPane.showMessageDialog(this, "Tidak ada data kategori yang sesuai untuk dicetak!", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            JTable printTable = new JTable(printModel);
+            printTable.setRowHeight(25);
+            printTable.getTableHeader().setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 12));
+            printTable.setFont(new java.awt.Font("SansSerif", java.awt.Font.PLAIN, 12));
+
+            javax.swing.JFrame tempFrame = new javax.swing.JFrame();
+            tempFrame.setUndecorated(true);
+            tempFrame.add(new javax.swing.JScrollPane(printTable));
+            tempFrame.pack(); 
+
+            String tanggal = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date());
+            MessageFormat header = new MessageFormat("Laporan Grup Kategori InventoriKu | Dicetak: " + tanggal);
+            MessageFormat footer = new MessageFormat("Halaman {0}");
+
+            JOptionPane.showMessageDialog(this, "Menyiapkan " + printModel.getRowCount() + " baris data kategori. Silakan tunggu...", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+
+            boolean isPrinted = printTable.print(
+                JTable.PrintMode.FIT_WIDTH, 
+                header, 
+                footer, 
+                true,   
+                null, 
+                true,   
+                null
+            );
+
+            tempFrame.dispose();
+
+            if (isPrinted) {
+                JOptionPane.showMessageDialog(this, "Laporan kategori berhasil dicetak!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Pencetakan dibatalkan oleh pengguna.", "Dibatalkan", JOptionPane.WARNING_MESSAGE);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal mencetak laporan kategori!\nError: " + e.getMessage(), "Error Print", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.

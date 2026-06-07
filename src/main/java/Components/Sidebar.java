@@ -99,7 +99,6 @@ public class Sidebar extends javax.swing.JPanel {
         btnStok.addActionListener(this::btnStokActionPerformed);
 
         btnLaporan.setText("Laporan Stok");
-        btnLaporan.addActionListener(this::btnLaporanActionPerformed);
 
         btnUser.setText("Manajemen User");
         btnUser.addActionListener(this::btnUserActionPerformed);
@@ -196,13 +195,12 @@ public class Sidebar extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnUserActionPerformed
 
-    private void btnLaporanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLaporanActionPerformed
+    private void btnLaporanActionPerformed(java.awt.event.ActionEvent evt) {                                           
         // TODO add your handling code here:
         if (listener != null) {
             listener.onMenuClicked("LaporanStok");
         }
-    }//GEN-LAST:event_btnLaporanActionPerformed
-
+    }                                          
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBarang;

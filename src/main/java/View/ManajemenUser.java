@@ -14,6 +14,11 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import java.awt.print.PrinterException;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.swing.JTable;
 /**
  *
  * @author LENOVO
@@ -54,6 +59,10 @@ public class ManajemenUser extends javax.swing.JPanel {
 
         dataTable1.getComboBox().addActionListener(e -> {
             loadDataUser();
+        });
+        
+        dataTable1.getBtnCetak().addActionListener(e -> {
+            cetakLaporan();
         });
 
         dataTable1.getBtnTambah().addActionListener(e -> {
@@ -323,6 +332,120 @@ public class ManajemenUser extends javax.swing.JPanel {
             if (rs.next()) return String.valueOf(rs.getInt(1)) + " Staff";
         } catch (Exception e) { e.printStackTrace(); }
         return "0";
+    }
+    
+    private void cetakLaporan() {
+        try {
+            // 1. Ambil keyword pencarian secara aman
+            String keyword = "";
+            if (dataTable1.getSearchField() != null && dataTable1.getSearchField().getText() != null) {
+                keyword = dataTable1.getSearchField().getText().trim();
+                // Abaikan jika berisi teks placeholder default
+                if (keyword.equalsIgnoreCase("Cari User...") || keyword.equalsIgnoreCase("Cari User (Username/Nama)...")) {
+                    keyword = "";
+                }
+            }
+
+            // Ambil filter Role dari ComboBox
+            String selectedRole = "Semua Role";
+            if (dataTable1.getComboBox() != null && dataTable1.getComboBox().getSelectedItem() != null) {
+                selectedRole = dataTable1.getComboBox().getSelectedItem().toString();
+            }
+
+            // 2. Tentukan Kolom Cetak khusus untuk Laporan User
+            String[] printKolom = {"Username", "Nama Lengkap", "Role"};
+            DefaultTableModel printModel = new DefaultTableModel(printKolom, 0);
+
+            // 3. Susun Query Database Dinamis (Mengambil data tanpa batasan pagination)
+            Connection conn = db.koneksi.getConnection();
+            StringBuilder dataSql = new StringBuilder("""
+                SELECT username, nama_lengkap, role 
+                FROM users 
+                WHERE 1=1 
+            """);
+
+            // Filter keyword (Username atau Nama Lengkap)
+            if (!keyword.isEmpty()) {
+                dataSql.append(" AND (username LIKE ? OR nama_lengkap LIKE ?) ");
+            }
+
+            // Filter Role (ADMIN / STAFF)
+            if (!selectedRole.equals("Semua Role")) {
+                dataSql.append(" AND role = ? ");
+            }
+
+            dataSql.append(" ORDER BY username ASC ");
+
+            PreparedStatement psData = conn.prepareStatement(dataSql.toString());
+            int paramIndex = 1;
+
+            // Atur parameter query secara berurutan
+            if (!keyword.isEmpty()) {
+                psData.setString(paramIndex++, "%" + keyword + "%");
+                psData.setString(paramIndex++, "%" + keyword + "%");
+            }
+            if (!selectedRole.equals("Semua Role")) {
+                psData.setString(paramIndex++, selectedRole);
+            }
+
+            ResultSet rs = psData.executeQuery();
+            while (rs.next()) {
+                printModel.addRow(new Object[]{
+                    rs.getString("username") != null ? rs.getString("username") : "-",
+                    rs.getString("nama_lengkap") != null ? rs.getString("nama_lengkap") : "-",
+                    rs.getString("role") != null ? rs.getString("role") : "-"
+                });
+            }
+
+            // Validasi jika tidak ada data yang ditemukan
+            if (printModel.getRowCount() == 0) {
+                JOptionPane.showMessageDialog(this, "Tidak ada data user yang sesuai untuk dicetak!", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+
+            // 4. Buat JTable bayangan untuk kebutuhan print
+            JTable printTable = new JTable(printModel);
+            printTable.setRowHeight(25);
+            printTable.getTableHeader().setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 12));
+            printTable.setFont(new java.awt.Font("SansSerif", java.awt.Font.PLAIN, 12));
+
+            // Gunakan hidden frame agar render layout PDF sempurna & tidak corrupted
+            javax.swing.JFrame tempFrame = new javax.swing.JFrame();
+            tempFrame.setUndecorated(true);
+            tempFrame.add(new javax.swing.JScrollPane(printTable));
+            tempFrame.pack(); 
+
+            // 5. Setup Header & Footer Laporan
+            String tanggal = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(new Date());
+            MessageFormat header = new MessageFormat("Laporan Data User InventoriKu | Dicetak: " + tanggal);
+            MessageFormat footer = new MessageFormat("Halaman {0}");
+
+            JOptionPane.showMessageDialog(this, "Menyiapkan " + printModel.getRowCount() + " data akun user. Silakan tunggu...", "Informasi", JOptionPane.INFORMATION_MESSAGE);
+
+            // 6. Jalankan Proses Print
+            boolean isPrinted = printTable.print(
+                JTable.PrintMode.FIT_WIDTH, 
+                header, 
+                footer, 
+                true,   
+                null, 
+                true,   
+                null
+            );
+
+            // Tutup virtual frame dari memori
+            tempFrame.dispose();
+
+            if (isPrinted) {
+                JOptionPane.showMessageDialog(this, "Laporan user berhasil dicetak!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Pencetakan dibatalkan oleh pengguna.", "Dibatalkan", JOptionPane.WARNING_MESSAGE);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal mencetak laporan user!\nError: " + e.getMessage(), "Error Print", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     /**
