@@ -44,6 +44,8 @@ public class MainFrame extends javax.swing.JFrame {
                     showManajemenStok();             
                 } else if (menuName.equals("ManajemenUser")) {
                     showManajemenUser();
+                } else if (menuName.equals("LaporanStok")) {
+                    showLaporanStok();
                 }
             }
         });
@@ -102,6 +104,17 @@ public class MainFrame extends javax.swing.JFrame {
         pnlMainContent.setLayout(new java.awt.BorderLayout());
         pnlMainContent.add(new javax.swing.JScrollPane(halamanUser), java.awt.BorderLayout.CENTER);
         halamanUser.setSize(pnlMainContent.getSize());
+        
+        pnlMainContent.revalidate();
+        pnlMainContent.repaint();
+    }
+    
+    private void showLaporanStok() {
+        View.LaporanStok halamanLaporanStok = new View.LaporanStok();
+        pnlMainContent.removeAll();
+        pnlMainContent.setLayout(new java.awt.BorderLayout());
+        pnlMainContent.add(new javax.swing.JScrollPane(halamanLaporanStok), java.awt.BorderLayout.CENTER);
+        halamanLaporanStok.setSize(pnlMainContent.getSize());
         
         pnlMainContent.revalidate();
         pnlMainContent.repaint();
