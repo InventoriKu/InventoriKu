@@ -27,13 +27,13 @@ public class ManajemenKategori extends javax.swing.JPanel {
         dataTable1.setComboBoxVisible(false);
 
         String[] kolomKategori = {
-            "ID", "Nama Kategori", "Aksi"
+            "ID", "Nama Kategori", "Total Barang", "Aksi"
         };
         dataTable1.setColumns(kolomKategori);
         dataTable1.getTable().getColumnModel().getColumn(0).setMinWidth(0);
         dataTable1.getTable().getColumnModel().getColumn(0).setMaxWidth(0);
         dataTable1.getTable().getColumnModel().getColumn(0).setWidth(0);
-        dataTable1.addActionColumn(2);
+        dataTable1.addActionColumn(3);
         
         dataTable1.setPaginationActionListener((targetPage, limit) -> {
             loadDataKategori(targetPage, limit);
@@ -181,7 +181,15 @@ public class ManajemenKategori extends javax.swing.JPanel {
                 totalDataFilter = rsCount.getInt(1);
             }
 
-            String dataSql = "SELECT id_kategori, nama_kategori FROM kategori WHERE nama_kategori LIKE ? LIMIT ? OFFSET ?";
+            String dataSql = """
+                SELECT k.id_kategori, k.nama_kategori, COUNT(b.id_barang) AS jumlah_barang 
+                FROM kategori k 
+                LEFT JOIN barang b ON k.id_kategori = b.id_kategori 
+                WHERE k.nama_kategori LIKE ? 
+                GROUP BY k.id_kategori, k.nama_kategori 
+                LIMIT ? OFFSET ?
+            """;
+            
             PreparedStatement psData = conn.prepareStatement(dataSql);
             psData.setString(1, "%" + keyword + "%");
             psData.setInt(2, limit);
@@ -192,7 +200,8 @@ public class ManajemenKategori extends javax.swing.JPanel {
                 model.addRow(new Object[]{
                     rs.getInt("id_kategori"),
                     rs.getString("nama_kategori"),
-                    ""
+                    rs.getInt("jumlah_barang") + " Unit",
+                    "" 
                 });
             }
 

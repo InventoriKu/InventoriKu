@@ -42,7 +42,9 @@ public class MainFrame extends javax.swing.JFrame {
                     showManajemenKategori();             
                 } else if (menuName.equals("ManajemenStok")) {
                     showManajemenStok();             
-                } 
+                } else if (menuName.equals("ManajemenUser")) {
+                    showManajemenUser();
+                }
             }
         });
     }
@@ -89,6 +91,17 @@ public class MainFrame extends javax.swing.JFrame {
         pnlMainContent.setLayout(new java.awt.BorderLayout());
         pnlMainContent.add(new javax.swing.JScrollPane(halamanStok), java.awt.BorderLayout.CENTER);
         halamanStok.setSize(pnlMainContent.getSize());
+        
+        pnlMainContent.revalidate();
+        pnlMainContent.repaint();
+    }
+    
+    private void showManajemenUser() {
+        View.ManajemenUser halamanUser = new View.ManajemenUser();
+        pnlMainContent.removeAll();
+        pnlMainContent.setLayout(new java.awt.BorderLayout());
+        pnlMainContent.add(new javax.swing.JScrollPane(halamanUser), java.awt.BorderLayout.CENTER);
+        halamanUser.setSize(pnlMainContent.getSize());
         
         pnlMainContent.revalidate();
         pnlMainContent.repaint();

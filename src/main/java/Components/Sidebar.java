@@ -101,6 +101,7 @@ public class Sidebar extends javax.swing.JPanel {
         btnLaporan.setText("Laporan Stok");
 
         btnUser.setText("Manajemen User");
+        btnUser.addActionListener(this::btnUserActionPerformed);
 
         btnLogout.setBackground(new java.awt.Color(204, 0, 0));
         btnLogout.setForeground(new java.awt.Color(255, 255, 255));
@@ -116,14 +117,14 @@ public class Sidebar extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addComponent(btnDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
+                        .addGap(34, 34, 34)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblRole, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblNama, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(13, Short.MAX_VALUE))
+                            .addComponent(lblNama, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(13, 13, 13)
+                        .addComponent(btnDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(32, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(12, 12, 12)
@@ -143,9 +144,9 @@ public class Sidebar extends javax.swing.JPanel {
                 .addComponent(lblNama)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblRole)
-                .addGap(12, 12, 12)
+                .addGap(17, 17, 17)
                 .addComponent(btnDashboard)
-                .addContainerGap(217, Short.MAX_VALUE))
+                .addContainerGap(212, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(92, 92, 92)
@@ -186,6 +187,13 @@ public class Sidebar extends javax.swing.JPanel {
             listener.onMenuClicked("Dashboard");
         }
     }//GEN-LAST:event_btnDashboardActionPerformed
+
+    private void btnUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUserActionPerformed
+        // TODO add your handling code here:
+        if (listener != null) {
+            listener.onMenuClicked("ManajemenUser");
+        }
+    }//GEN-LAST:event_btnUserActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
