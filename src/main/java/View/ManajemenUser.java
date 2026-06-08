@@ -463,7 +463,7 @@ public class ManajemenUser extends javax.swing.JPanel {
         dataTable1 = new Components.DataTable();
         jLabel1 = new javax.swing.JLabel();
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(30, 58, 138));
         jLabel1.setText("Manajemen User");
 

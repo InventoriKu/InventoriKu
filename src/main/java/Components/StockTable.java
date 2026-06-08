@@ -215,6 +215,7 @@ public class StockTable extends javax.swing.JPanel {
                 return types [columnIndex];
             }
         });
+        table.setEnabled(false);
         table.setFocusable(false);
         jScrollPane1.setViewportView(table);
         if (table.getColumnModel().getColumnCount() > 0) {
