@@ -104,11 +104,11 @@ public class LaporanStok extends javax.swing.JPanel {
         add(scrollPane, BorderLayout.CENTER);
     }
 
-    private JPanel buildFilterPanel() {
-        JPanel pnl = new JPanel();
-        pnl.setLayout(new FlowLayout(FlowLayout.LEFT, 12, 10));
-        pnl.setBackground(new Color(248, 250, 252));
-        pnl.setBorder(BorderFactory.createCompoundBorder(
+         private JPanel buildFilterPanel() {
+                JPanel pnl = new JPanel();
+                pnl.setLayout(new FlowLayout(FlowLayout.LEFT, 12, 10));
+                pnl.setBackground(Color.WHITE);  // ← JADI INI
+                pnl.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createMatteBorder(1, 0, 1, 0, new Color(220, 226, 234)),
                 BorderFactory.createEmptyBorder(8, 12, 8, 12)
         ));
