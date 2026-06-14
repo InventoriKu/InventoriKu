@@ -173,9 +173,22 @@ public class ManajemenBarang extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, "Nama barang tidak boleh kosong!", "Peringatan", JOptionPane.WARNING_MESSAGE);
                 return;
             }
-
+            
+            if (txtSupplier.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Supplier barang tidak boleh kosong!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
             KategoriItem selectedKat = (KategoriItem) cbKategori.getSelectedItem();
-            Integer katId = (selectedKat != null) ? selectedKat.id : null;
+            if (selectedKat == null) {
+                JOptionPane.showMessageDialog(this, 
+                    "Kategori belum dipilih!\nSilakan tambahkan kategori terlebih dahulu melalui menu Kelola Kategori.", 
+                    "Kategori Tidak Tersedia", 
+                    JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            Integer katId =  selectedKat.id;
 
             try {
                 Connection conn = db.koneksi.getConnection();
@@ -211,7 +224,7 @@ public class ManajemenBarang extends javax.swing.JPanel {
     }
 
     private void hapusBarang(int idBarang, String namaBarang) {
-        int confirm = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus barang '" + namaBarang + "'?", "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        int confirm = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus barang '" + namaBarang + "'? Perubahan akan memengaruhi seluruh pergerekan stok " + namaBarang, "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         if (confirm == JOptionPane.YES_OPTION) {
             try {
                 Connection conn = db.koneksi.getConnection();
@@ -526,24 +539,22 @@ public class ManajemenBarang extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 1114, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(tblBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 1064, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 22, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(21, 21, 21)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tblBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addComponent(tblBarang, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 

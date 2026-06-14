@@ -63,6 +63,14 @@ public class DataTable extends javax.swing.JPanel {
         setupPaginationEvents();
     }
     
+    private boolean showHapusButton = true;
+
+    // Tambahkan setter method
+    public void setShowHapusButton(boolean show) {
+        this.showHapusButton = show;
+        table.repaint(); // refresh tampilan
+    }
+    
     private void setupTableDesign() {
         table.getTableHeader().setDefaultRenderer(new DefaultTableCellRenderer() {
             @Override
@@ -214,13 +222,14 @@ public class DataTable extends javax.swing.JPanel {
             panel.setBackground(isSelected ? table.getSelectionBackground() : (row % 2 == 0 ? Color.WHITE : new Color(252, 253, 254)));
 
             JButton btnEdit = new JButton("Edit");
-            JButton btnHapus = new JButton("Hapus");
-
             styleMinibutton(btnEdit, new Color(0, 102, 204));
-            styleMinibutton(btnHapus, new Color(204, 0, 0));
-
             panel.add(btnEdit);
-            panel.add(btnHapus);
+
+            if (showHapusButton) { // <-- tambahkan kondisi ini
+                JButton btnHapus = new JButton("Hapus");
+                styleMinibutton(btnHapus, new Color(204, 0, 0));
+                panel.add(btnHapus);
+            }
 
             return panel;
         }
@@ -254,14 +263,18 @@ public class DataTable extends javax.swing.JPanel {
             btnEdit.addActionListener(e -> {
                 fireEditingStopped();
                 if (tableActionListener != null) tableActionListener.onEdit(currentRow);
-            });
-            btnHapus.addActionListener(e -> {
-                fireEditingStopped();
-                if (tableActionListener != null) tableActionListener.onDelete(currentRow);
-            });
-
-            panel.add(btnEdit);
-            panel.add(btnHapus);
+            });            
+            panel.add(btnEdit);            
+            
+            if (showHapusButton) { // <-- tambahkan kondisi ini
+                btnHapus = new JButton("Hapus");
+                styleMinibutton(btnHapus, new Color(204, 0, 0));
+                btnHapus.addActionListener(e -> {
+                    fireEditingStopped();
+                    if (tableActionListener != null) tableActionListener.onDelete(currentRow);
+                });
+                panel.add(btnHapus);
+            }
         }
 
         private void styleMinibutton(JButton btn, Color color) {

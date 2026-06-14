@@ -120,6 +120,14 @@ public class koneksi {
             try {
                 stmt.executeUpdate("ALTER TABLE stok_masuk ADD COLUMN catatan VARCHAR(100)");
                 stmt.executeUpdate("ALTER TABLE stok_keluar ADD COLUMN catatan VARCHAR(100)");
+                stmt.executeUpdate("ALTER TABLE stok_masuk DROP FOREIGN KEY stok_masuk_ibfk_1");
+                stmt.executeUpdate("ALTER TABLE stok_masuk ADD CONSTRAINT fk_masuk_barang FOREIGN KEY (id_barang) REFERENCES barang(id_barang) ON DELETE CASCADE");
+                stmt.executeUpdate("ALTER TABLE stok_keluar DROP FOREIGN KEY stok_keluar_ibfk_1");
+                stmt.executeUpdate("ALTER TABLE stok_keluar ADD CONSTRAINT fk_keluar_barang FOREIGN KEY (id_barang) REFERENCES barang(id_barang) ON DELETE CASCADE");
+                stmt.executeUpdate("ALTER TABLE barang DROP FOREIGN KEY barang_ibfk_1");
+                stmt.executeUpdate("ALTER TABLE barang ADD CONSTRAINT fk_barang_kategori FOREIGN KEY (id_kategori) REFERENCES kategori(id_kategori) ON DELETE CASCADE");
+                
+                
             } catch (SQLException e) {
                 if (e.getMessage().contains("Duplicate column name")) {
                     System.out.println("Kolom sudah ada, skip ALTER");

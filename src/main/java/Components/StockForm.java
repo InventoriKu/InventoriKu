@@ -36,6 +36,11 @@ public class StockForm extends javax.swing.JPanel {
             while (rs.next()) {
                 cb.addItem(new BarangItem(rs.getInt("id_barang"), rs.getString("nama_barang")));
             }
+            
+            Object pertama = cb.getItemAt(0);
+            if (pertama instanceof BarangItem) {
+                loadSupplierUntukBarang(((BarangItem) pertama).id);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -156,6 +161,31 @@ public class StockForm extends javax.swing.JPanel {
             confirmButton.removeActionListener(al);
         }
         confirmButton.addActionListener(listener);
+    }
+    
+    private void loadSupplierUntukBarang(int idBarang) {
+        inputTarget.removeAllItems();
+        try {
+            java.sql.Connection conn = db.koneksi.getConnection();
+            java.sql.PreparedStatement ps = conn.prepareStatement(
+                "SELECT supplier FROM barang WHERE id_barang = ? AND supplier IS NOT NULL AND supplier != ''"
+            );
+            ps.setInt(1, idBarang);
+            java.sql.ResultSet rs = ps.executeQuery();
+
+            boolean adaSupplier = false;
+            while (rs.next()) {
+                inputTarget.addItem(rs.getString("supplier"));
+                adaSupplier = true;
+            }
+
+            if (!adaSupplier) {
+                inputTarget.addItem("(Tidak ada supplier terdaftar)");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -309,6 +339,11 @@ public class StockForm extends javax.swing.JPanel {
 
     private void inputBarangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inputBarangActionPerformed
         // TODO add your handling code here:
+        Object selected = inputBarang.getSelectedItem();
+        if (selected instanceof BarangItem) {
+            int idBarang = ((BarangItem) selected).id;
+            loadSupplierUntukBarang(idBarang);
+        }
     }//GEN-LAST:event_inputBarangActionPerformed
 
     private void confirmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confirmButtonActionPerformed
