@@ -39,6 +39,7 @@ public class ManajemenKategori extends javax.swing.JPanel {
         dataTable1.getTable().getColumnModel().getColumn(0).setMaxWidth(0);
         dataTable1.getTable().getColumnModel().getColumn(0).setWidth(0);
         dataTable1.addActionColumn(3);
+        dataTable1.setShowHapusButton(false); 
         
         dataTable1.setPaginationActionListener((targetPage, limit) -> {
             loadDataKategori(targetPage, limit);
@@ -69,8 +70,7 @@ public class ManajemenKategori extends javax.swing.JPanel {
             @Override
             public void onDelete(int row) {
                 int idKategori = (int) dataTable1.getModel().getValueAt(row, 0);
-                String namaKategori = dataTable1.getModel().getValueAt(row, 1).toString();
-                hapusKategori(idKategori, namaKategori);
+                String namaKategori = dataTable1.getModel().getValueAt(row, 1).toString();                
             }
         });
 
@@ -80,7 +80,7 @@ public class ManajemenKategori extends javax.swing.JPanel {
     
     private void showKategoriDialog(Integer idKategori) {
         JTextField txtNamaKategori = new JTextField();
-
+        
         if (idKategori != null) {
             try {
                 Connection conn = db.koneksi.getConnection();
@@ -132,25 +132,7 @@ public class ManajemenKategori extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, "Terjadi Kesalahan Database: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }
-
-    private void hapusKategori(int idKategori, String namaKategori) {
-        int confirm = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus kategori '" + namaKategori + "'?", "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-        if (confirm == JOptionPane.YES_OPTION) {
-            try {
-                Connection conn = db.koneksi.getConnection();
-                String sql = "DELETE FROM kategori WHERE id_kategori = ?";
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ps.setInt(1, idKategori);
-                ps.executeUpdate();
-                JOptionPane.showMessageDialog(this, "Kategori Berhasil Dihapus!");
-                refreshData();
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "Gagal Menghapus! Pastikan tidak ada barang yang menggunakan kategori ini.\n\nError: " + e.getMessage(), "Kategori Terpakai", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
+    }    
 
     private void refreshData() {
         loadDataKategori();

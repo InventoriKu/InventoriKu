@@ -73,6 +73,7 @@ public class StockTable extends javax.swing.JPanel {
         table.setShowGrid(false);
         table.setIntercellSpacing(new java.awt.Dimension(0, 0)); 
         table.setBackground(java.awt.Color.WHITE); 
+        jScrollPane1.getViewport().setBackground(java.awt.Color.WHITE);
         table.setSelectionBackground(new java.awt.Color(242, 244, 248));
         table.setSelectionForeground(java.awt.Color.BLACK);        
     }
@@ -217,6 +218,7 @@ public class StockTable extends javax.swing.JPanel {
         });
         table.setEnabled(false);
         table.setFocusable(false);
+        table.setSelectionBackground(new java.awt.Color(232, 255, 255));
         jScrollPane1.setViewportView(table);
         if (table.getColumnModel().getColumnCount() > 0) {
             table.getColumnModel().getColumn(0).setHeaderValue("Tipe");

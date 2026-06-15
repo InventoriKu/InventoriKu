@@ -31,7 +31,7 @@ public class OutStockTransaction extends javax.swing.JPanel {
 
         // Setup tabel
         stockTable1.loadData();
-        stockTable1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 40));
+        stockTable1.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 10));
 
         // Listener tombol konfirmasi
         stockForm2.setConfirmation(e -> handleStockOut());

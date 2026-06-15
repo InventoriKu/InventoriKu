@@ -63,12 +63,21 @@ public class LaporanStok extends javax.swing.JPanel {
         lblJudul.setForeground(new Color(30, 58, 138));
         pnlHeader.add(lblJudul, BorderLayout.WEST);
 
+        // Panel kanan: lblTotal + btnCetak berdampingan
+        JPanel pnlKanan = new JPanel(new FlowLayout(FlowLayout.RIGHT, 12, 0));
+        pnlKanan.setBackground(Color.WHITE);
+
         lblTotal = new JLabel("0 data");
         lblTotal.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         lblTotal.setForeground(new Color(100, 110, 130));
-        pnlHeader.add(lblTotal, BorderLayout.EAST);
 
-        add(pnlHeader, BorderLayout.NORTH);
+        btnCetak = new JButton("Cetak");
+        styleButton(btnCetak, new Color(16, 185, 129), Color.WHITE);
+        btnCetak.addActionListener(e -> cetakLaporanStok());
+
+        pnlKanan.add(lblTotal);
+        pnlKanan.add(btnCetak);
+        pnlHeader.add(pnlKanan, BorderLayout.EAST);
 
         // ── Filter Panel ─────────────────────────────────────────
         JPanel pnlFilter = buildFilterPanel();
@@ -160,19 +169,7 @@ public class LaporanStok extends javax.swing.JPanel {
         btnFilter = new JButton("Filter");
         styleButton(btnFilter, new Color(30, 58, 138), Color.WHITE);
         btnFilter.addActionListener(e -> loadData());
-        pnl.add(btnFilter);
-
-        btnReset = new JButton("Reset");
-        styleButton(btnReset, new Color(220, 226, 234), new Color(50, 60, 80));
-        btnReset.addActionListener(e -> resetFilter());
-        pnl.add(btnReset);
-
-        // ── PERUBAHAN 2: Inisialisasi & Penempatan Tombol Cetak ────
-        btnCetak = new JButton("Cetak");
-        styleButton(btnCetak, new Color(16, 185, 129), Color.WHITE); // Hijau Emerald
-        btnCetak.addActionListener(e -> cetakLaporanStok());
-        pnl.add(btnCetak);
-        // ─────────────────────────────────────────────────────────
+        pnl.add(btnFilter);      
 
         return pnl;
     }
