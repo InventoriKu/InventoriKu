@@ -19,7 +19,8 @@
           <Group type="102" alignment="0" attributes="0">
               <Component id="stockForm2" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="stockTable1" pref="713" max="32767" attributes="0"/>
+              <Component id="stockTable1" min="-2" pref="707" max="-2" attributes="0"/>
+              <EmptySpace pref="14" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
