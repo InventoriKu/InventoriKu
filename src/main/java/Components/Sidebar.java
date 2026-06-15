@@ -84,6 +84,7 @@ public class Sidebar extends javax.swing.JPanel {
         btnLogout = new javax.swing.JButton();
         btnDashboard = new javax.swing.JButton();
 
+        setBackground(new java.awt.Color(204, 255, 204));
         setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         lblNama.setText("jLabel1");
